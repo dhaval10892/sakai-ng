@@ -1,0 +1,101 @@
+<div class="card">
+    <div class="flex justify-content-between align-items-center mb-3">
+        <h2 class="m-0">User Management</h2>
+
+        <button pButton type="button" label="Add User" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+
+    <p-table [value]="users" [loading]="loading" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Username</th>
+                <th>Display Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.displayName }}</td>
+                <td>
+                    <p-tag [value]="user.role" [severity]="getRoleSeverity(user.role)"></p-tag>
+                </td>
+                <td>
+                    <p-tag [value]="user.isActive ? 'Active' : 'Inactive'" [severity]="getStatusSeverity(user.isActive)"> </p-tag>
+                </td>
+                <td>
+                    <div class="flex gap-2">
+                        <button pButton type="button" icon="pi pi-pencil" severity="info" (click)="openRoleDialog(user)"></button>
+                        <button pButton type="button" icon="pi pi-key" severity="warn" (click)="openResetDialog(user)"></button>
+                        <button pButton type="button" icon="pi pi-trash" severity="danger" (click)="deleteUser(user)"></button>
+                        <button pButton type="button" [icon]="user.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [severity]="user.isActive ? 'warn' : 'success'" (click)="toggleStatus(user)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog header="Create User" [(visible)]="createDialogVisible" [modal]="true" [style]="{ width: '30rem' }">
+    <div class="field mb-3">
+        <label for="username" class="block mb-2 font-medium">Username</label>
+        <input id="username" type="text" pInputText [(ngModel)]="newUser.username" class="w-full" />
+    </div>
+
+    <div class="field mb-3">
+        <label for="displayName" class="block mb-2 font-medium">Display Name</label>
+        <input id="displayName" type="text" pInputText [(ngModel)]="newUser.displayName" class="w-full" />
+    </div>
+
+    <div class="field mb-3">
+        <label for="password" class="block mb-2 font-medium">Password</label>
+        <input id="password" type="text" pInputText [(ngModel)]="newUser.password" class="w-full" />
+    </div>
+
+    <div class="field mb-4">
+        <label for="role" class="block mb-2 font-medium">Role</label>
+        <p-select inputId="role" [options]="roleOptions" [(ngModel)]="newUser.role" optionLabel="label" optionValue="value" appendTo="body" class="w-full"> </p-select>
+    </div>
+
+    <div class="flex justify-content-end gap-2">
+        <button pButton type="button" label="Cancel" severity="secondary" (click)="createDialogVisible = false"></button>
+
+        <button pButton type="button" label="Create" (click)="createUser()"></button>
+    </div>
+</p-dialog>
+
+<p-dialog header="Update Role" [(visible)]="roleDialogVisible" [modal]="true" [style]="{ width: '28rem' }">
+    <div *ngIf="currentUser">
+        <div class="mb-3"><strong>User:</strong> {{ currentUser.username }}</div>
+
+        <div class="field mb-4">
+            <label for="editRole" class="block mb-2 font-medium">Role</label>
+            <p-select inputId="editRole" [options]="roleOptions" [(ngModel)]="selectedRole" optionLabel="label" optionValue="value" class="w-full"> </p-select>
+        </div>
+
+        <div class="flex justify-content-end gap-2">
+            <button pButton type="button" label="Cancel" severity="secondary" (click)="roleDialogVisible = false"></button>
+
+            <button pButton type="button" label="Update" (click)="updateRole()"></button>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog header="Reset Password" [(visible)]="resetDialogVisible" [modal]="true" [style]="{ width: '28rem' }">
+    <div *ngIf="resetTargetUser">
+        <div class="mb-3"><strong>User:</strong> {{ resetTargetUser.username }}</div>
+
+        <div class="field mb-4">
+            <label for="resetPassword" class="block mb-2 font-medium">New Password</label>
+            <input id="resetPassword" type="text" pInputText [(ngModel)]="newResetPassword" class="w-full" />
+        </div>
+
+        <div class="flex justify-content-end gap-2">
+            <button pButton type="button" label="Cancel" severity="secondary" (click)="resetDialogVisible = false"></button>
+
+            <button pButton type="button" label="Reset Password" severity="warn" (click)="resetPassword()"></button>
+        </div>
+    </div>
+</p-dialog>

@@ -1,0 +1,101 @@
+<div class="card mb-4">
+    <div class="flex justify-content-between align-items-center flex-wrap gap-2">
+        <h3 class="m-0">Payment Reports</h3>
+
+        <button pButton type="button" label="Export CSV" icon="pi pi-download" severity="success" (click)="exportCsv()"></button>
+    </div>
+</div>
+<div class="grid">
+    <div class="col-12 md:col-6 xl:col-3">
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <p class="text-3xl font-semibold">${{ totalRevenue.toFixed(2) }}</p>
+        </div>
+    </div>
+
+    <div class="col-12 md:col-6 xl:col-3">
+        <div class="card">
+            <h3>Total Paid Payments</h3>
+            <p class="text-3xl font-semibold">{{ totalPaidPayments }}</p>
+        </div>
+    </div>
+
+    <div class="col-12 md:col-6 xl:col-3">
+        <div class="card">
+            <h3>Cash Revenue</h3>
+            <p class="text-3xl font-semibold">${{ cashRevenue.toFixed(2) }}</p>
+        </div>
+    </div>
+
+    <div class="col-12 md:col-6 xl:col-3">
+        <div class="card">
+            <h3>Card Revenue</h3>
+            <p class="text-3xl font-semibold">${{ cardRevenue.toFixed(2) }}</p>
+        </div>
+    </div>
+    <div class="col-12 md:col-6 xl:col-3">
+        <div class="card">
+            <h3>QR Revenue</h3>
+            <p class="text-3xl font-semibold">${{ qrRevenue.toFixed(2) }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="grid">
+        <div class="col-12 md:col-4">
+            <label for="paymentMethodFilter" class="block mb-2 font-medium">Payment Method</label>
+            <p-select inputId="paymentMethodFilter" [options]="paymentMethodOptions" [(ngModel)]="selectedPaymentMethod" optionLabel="label" optionValue="value" class="w-full" (onChange)="applyFilters()"> </p-select>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <h3>Payment Transactions</h3>
+
+            <p-table
+                #paymentsTable
+                [value]="filteredPayments"
+                [loading]="loading"
+                [paginator]="true"
+                [rows]="pageSize"
+                [totalRecords]="totalRecords"
+                [lazy]="true"
+                (onPage)="onPageChange($event)"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} payments"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Order ID</th>
+                        <th>Table</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Paid At</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-payment>
+                    <tr>
+                        <td>#{{ payment.id }}</td>
+                        <td>#{{ payment.orderId }}</td>
+                        <td>{{ payment.table }}</td>
+                        <td>${{ payment.amount.toFixed(2) }}</td>
+                        <td>{{ payment.paymentMethod }}</td>
+                        <td>
+                            <p-tag [value]="payment.paymentStatus" [severity]="getSeverity(payment.paymentStatus)"></p-tag>
+                        </td>
+                        <td>{{ payment.createdAt | date:'short' }}</td>
+                        <td>{{ payment.paidAt ? (payment.paidAt | date:'short') : '-' }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

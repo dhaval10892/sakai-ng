@@ -1,0 +1,76 @@
+<div class="card">
+    <div class="flex justify-content-between align-items-center mb-3">
+        <h2 class="m-0">Billing</h2>
+        <button pButton type="button" label="Refresh" icon="pi pi-refresh" (click)="loadBillingData()"></button>
+    </div>
+
+    <p-table [value]="servedOrders" [loading]="loading">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Order ID</th>
+                <th>Table</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-order>
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.table }}</td>
+                <td>{{ order.itemsText }}</td>
+                <td>${{ order.total.toFixed(2) }}</td>
+                <td>
+                    <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+                </td>
+                <td>
+                    <button pButton type="button" label="Mark Paid" icon="pi pi-check" severity="success" (click)="openPaymentDialog(order)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    @if(servedOrders.length === 0 && !loading){
+
+    <div class="mt-3">
+        <p>No served unpaid orders found.</p>
+    </div>
+}
+</div>
+
+<p-dialog header="Confirm Payment"
+ [(visible)]="paymentDialogVisible"
+  [modal]="true"
+   [style]="{ width: '30rem' }">
+    @if (currentOrder){
+
+    <div>
+        <div class="mb-3"><strong>Order:</strong> #{{ currentOrder.id }}</div>
+
+        <div class="mb-3"><strong>Table:</strong> {{ currentOrder.table }}</div>
+
+        <div class="mb-3"><strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}</div>
+
+        <div class="field mb-4">
+            <label for="paymentMethod" class="block mb-2 font-medium">Payment Method</label>
+            <p-select
+             inputId="paymentMethod" 
+            [options]="paymentMethodOptions"
+             [(ngModel)]="selectedPaymentMethod"
+              optionLabel="label" 
+              optionValue="value" 
+              appendTo="body"
+              class="w-full"> 
+            </p-select>
+        </div>
+
+        <div class="flex justify-content-end gap-2">
+            <button pButton type="button" label="Cancel" severity="secondary" (click)="paymentDialogVisible = false"></button>
+
+            <button pButton type="button" label="Confirm Paid" severity="success" (click)="markPaid()"></button>
+        </div>
+    </div>
+    }
+</p-dialog>

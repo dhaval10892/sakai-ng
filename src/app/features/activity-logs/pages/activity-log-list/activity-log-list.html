@@ -1,0 +1,79 @@
+<div class="card">
+    <div class="flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="m-0">Activity Logs</h2>
+        <div class="flex gap-2">
+            <button pButton type="button" label="Refresh" icon="pi pi-refresh" (click)="loadLogs()"></button>
+
+            <button pButton type="button" label="Export CSV" icon="pi pi-download" severity="success" (click)="exportCsv()"></button>
+        </div>
+    </div>
+    <div class="grid mb-4">
+        <div class="col-12 md:col-3">
+            <label for="actionFilter" class="block mb-2 font-medium">Action</label>
+            <p-select inputId="actionFilter" [options]="actionOptions" [(ngModel)]="selectedAction" optionLabel="label" optionValue="value" class="w-full" (onChange)="applyFilters()"> </p-select>
+        </div>
+
+        <div class="col-12 md:col-3">
+            <label for="entityFilter" class="block mb-2 font-medium">Entity</label>
+            <p-select inputId="entityFilter" [options]="entityOptions" [(ngModel)]="selectedEntity" optionLabel="label" optionValue="value" class="w-full" (onChange)="applyFilters()"> </p-select>
+        </div>
+
+        <div class="col-12 md:col-2">
+            <label for="startDate" class="block mb-2 font-medium">Start Date</label>
+            <input id="startDate" type="date" pInputText [(ngModel)]="startDate" class="w-full" (change)="applyFilters()" />
+        </div>
+
+        <div class="col-12 md:col-2">
+            <label for="endDate" class="block mb-2 font-medium">End Date</label>
+            <input id="endDate" type="date" pInputText [(ngModel)]="endDate" class="w-full" (change)="applyFilters()" />
+        </div>
+
+        <div class="col-12 md:col-2">
+            <label for="performedBy" class="block mb-2 font-medium">Performed By</label>
+            <input id="performedBy" type="text" pInputText [(ngModel)]="searchPerformedBy" class="w-full" (input)="applyFilters()" />
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <button pButton type="button" label="Clear Filters" severity="secondary" icon="pi pi-times" (click)="clearFilters()"></button>
+    </div>
+
+    <p-table
+  #logsTable
+  [value]="logs"
+  [loading]="loading"
+  [paginator]="true"
+  [rows]="pageSize"
+  [totalRecords]="totalRecords"
+  [lazy]="true"
+  (onPage)="onPageChange($event)"
+  [rowsPerPageOptions]="[10, 25, 50, 100]"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Action</th>
+                <th>Entity</th>
+                <th>Entity ID</th>
+                <th>Performed By</th>
+                <th>Performed At</th>
+                <th>Details</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-log>
+            <tr>
+                <td>{{ log.id }}</td>
+                <td>{{ log.action }}</td>
+                <td>
+                    <p-tag [value]="log.entityName" [severity]="getSeverity(log.entityName)"></p-tag>
+                </td>
+                <td>{{ log.entityId }}</td>
+                <td>{{ log.performedBy || 'system' }}</td>
+                <td>{{ log.performedAt | date:'medium' }}</td>
+                <td>{{ log.details || '-' }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

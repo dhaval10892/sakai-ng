@@ -1,0 +1,44 @@
+<div class="card">
+  <h2 class="mb-4">Change Password</h2>
+
+  <div class="field mb-3">
+    <label for="currentPassword" class="block mb-2 font-medium">Current Password</label>
+    <p-password
+      inputId="currentPassword"
+      [(ngModel)]="currentPassword"
+      [feedback]="false"
+      [toggleMask]="true"
+      styleClass="w-full">
+    </p-password>
+  </div>
+
+  <div class="field mb-3">
+    <label for="newPassword" class="block mb-2 font-medium">New Password</label>
+    <p-password
+      inputId="newPassword"
+      [(ngModel)]="newPassword"
+      [feedback]="true"
+      [toggleMask]="true"
+      styleClass="w-full">
+    </p-password>
+  </div>
+
+  <div class="field mb-4">
+    <label for="confirmPassword" class="block mb-2 font-medium">Confirm New Password</label>
+    <p-password
+      inputId="confirmPassword"
+      [(ngModel)]="confirmPassword"
+      [feedback]="false"
+      [toggleMask]="true"
+      styleClass="w-full">
+    </p-password>
+  </div>
+
+  <button
+    pButton
+    type="button"
+    label="Update Password"
+    (click)="changePassword()"
+    [disabled]="loading">
+  </button>
+</div>

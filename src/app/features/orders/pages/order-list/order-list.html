@@ -1,0 +1,188 @@
+<div class="card">
+  <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h2 class="m-0">Orders Management</h2>
+
+    <div class="flex gap-2 align-items-center flex-wrap">
+      <p-select
+        [options]="filterOptions"
+        [(ngModel)]="selectedStatusFilter"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Filter by status"
+        (onChange)="onFilterChange()">
+      </p-select>
+
+      <button
+        pButton
+        type="button"
+        label="Refresh"
+        icon="pi pi-refresh"
+        (click)="loadOrders()">
+      </button>
+    </div>
+  </div>
+
+  <p-table [value]="filteredOrders" [loading]="loading" >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Order ID</th>
+        <th>Table</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-order>
+      <tr>
+        <td>#{{ order.id }}</td>
+        <td>{{ order.table }}</td>
+        <td>{{ order.itemsText }}</td>
+        <td>${{ order.total.toFixed(2) }}</td>
+        <td>
+          <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+        </td>
+        <td>{{ order.createdAt | date:'short' }}</td>
+        <td>
+          <div class="flex gap-2 flex-wrap">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-eye"
+              severity="secondary"
+              (click)="openDetailsDialog(order)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              severity="info"
+              (click)="openEditDialog(order)">
+            </button>
+
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              severity="danger"
+              (click)="deleteOrder(order.id)">
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  header="Order Details"
+  [(visible)]="detailsDialogVisible"
+  [modal]="true"
+  >
+
+  <div class="mb-3">
+    <strong>Order ID:</strong> #{{ currentOrder.id }}
+  </div>
+
+  <div class="mb-3">
+    <strong>Table:</strong> {{ currentOrder.table }}
+  </div>
+
+  <div class="mb-3">
+    <strong>Status:</strong>
+    <p-tag [value]="currentOrder.status" [severity]="getSeverity(currentOrder.status)"></p-tag>
+  </div>
+
+  <div class="mb-3">
+    <strong>Created:</strong> {{ currentOrder.createdAt | date:'medium' }}
+  </div>
+
+  <div class="mb-3">
+    <strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}
+  </div>
+
+  <div class="mb-3">
+    <strong>Items:</strong>
+  </div>
+
+  <p-table [value]="currentOrder.items" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.menuItemName }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ item.unitPrice.toFixed(2) }}</td>
+        <td>${{ item.totalPrice.toFixed(2) }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog
+  header="Edit Order"
+  [(visible)]="editDialogVisible"
+  [modal]="true"
+  [style]="{ width: '32rem' }">
+
+  <div class="field mb-3">
+    <label for="table" class="block mb-2 font-medium">Table</label>
+    <input
+      id="table"
+      type="text"
+      pInputText
+      [(ngModel)]="currentOrder.table"
+      class="w-full" />
+  </div>
+
+  <div class="field mb-4">
+    <label for="status" class="block mb-2 font-medium">Status</label>
+    <p-select
+      inputId="status"
+      [options]="statusOptions"
+      [(ngModel)]="currentOrder.status"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select status"
+      class="w-full">
+    </p-select>
+  </div>
+
+  <div class="mb-3">
+    <strong>Items:</strong>
+    <div class="mt-2 p-2 border-1 surface-border border-round">
+      {{ currentOrder.itemsText || 'No items' }}
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}
+  </div>
+
+  <div class="flex justify-content-end gap-2">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      severity="secondary"
+      (click)="editDialogVisible = false">
+    </button>
+
+    <button
+      pButton
+      type="button"
+      label="Update"
+      (click)="saveOrder()">
+    </button>
+  </div>
+</p-dialog>

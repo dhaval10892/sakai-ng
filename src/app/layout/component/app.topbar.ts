@@ -5,16 +5,20 @@ import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '@/app/layout/service/layout.service';
+import { AuthService } from '@/app/core/services/auth.service';
+import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator],
+    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, ButtonModule],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
                 <i class="pi pi-bars"></i>
             </button>
+
             <a class="layout-topbar-logo" routerLink="/">
                 <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -33,7 +37,7 @@ import { LayoutService } from '@/app/layout/service/layout.service';
                         />
                     </g>
                 </svg>
-                <span>SAKAI</span>
+                <span>DineFlow Admin</span>
             </a>
         </div>
 
@@ -62,7 +66,7 @@ import { LayoutService } from '@/app/layout/service/layout.service';
                 <i class="pi pi-ellipsis-v"></i>
             </button>
 
-            <div class="layout-topbar-menu hidden lg:block">
+            <div class="layout-topbar-menu  lg:block">
                 <div class="layout-topbar-menu-content">
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
@@ -76,12 +80,30 @@ import { LayoutService } from '@/app/layout/service/layout.service';
                         <i class="pi pi-user"></i>
                         <span>Profile</span>
                     </button>
+
+                    <div class="flex align-items-center gap-2">
+                        <span>{{ authService.getUsername() }}</span>
+                        <!-- <small>({{ authService.getRole() }})</small>-->
+                    </div>
+                    <div class="px-3 py-2">
+                        <button pButton type="button" icon="pi pi-sign-out" label="Logout" severity="secondary" class="p-button-sm w-full" (click)="logout()"></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>`
 })
 export class AppTopbar {
+    constructor(
+        public authService: AuthService,
+        private router: Router
+    ) {}
+
+    logout(): void {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+    }
+
     items!: MenuItem[];
 
     layoutService = inject(LayoutService);

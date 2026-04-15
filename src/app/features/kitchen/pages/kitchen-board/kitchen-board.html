@@ -1,0 +1,38 @@
+<div class="card">
+    <h2>kitchen-board</h2>
+    <p>Mange active kitchen orders here</p>
+</div>
+
+<button  pButton (click)="goToWaiter()" type="button">Go to Waiter</button>
+<div class="grid">
+    @for (order of kitchenOrders; track order.id){
+ <div class="col-12 md:col-6 xl:col-4">
+<p-card>
+    <ng-template pTemplate="header">
+        <div class="p-3 pb-0">
+            <div class="flex justify-content-between align-items-center mb-0">
+                <h3 class="mr-3">Order # {{order.id}}</h3>
+                
+                    <p-tag class="ml-7" [value]="order.status" [severity]="getSeverity(order.status)" ></p-tag>
+                
+            </div>
+        </div>
+    </ng-template>
+    <div class="mb-2"><strong>Table:</strong>{{order.table}} </div>
+    <div class="mb-2"><strong>Items:</strong>{{order.itemsText}}</div>
+    <div class="mb-2"><strong>Total:</strong> {{order.total.toFixed(2)}}</div>
+
+    <div class="flex gap-2 flex-wrap">
+        <button pButton type="button" label="Preparing" severity="warn" (click)="markPreparing(order)">
+        </button>
+        <button pButton type="button" label="Ready" severity="success" (click)="markReady(order)"></button>
+    </div>
+</p-card>
+ </div>
+}
+</div>
+@if (kitchenOrders.length==0){
+    <div class="card">
+        No active  kitchen order
+    </div>
+}

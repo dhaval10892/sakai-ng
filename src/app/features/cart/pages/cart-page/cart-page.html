@@ -1,0 +1,73 @@
+<div class="card mb-4">
+    <div class="flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="m-0">Your Cart</h2>
+            <p class="mt-2 mb-0">Review Your selected items before placing the order.</p>
+            <p class="mt-2 mb-0">Table:<strong>{{tableNumber || 'N/A'}}</strong></p>
+        </div>
+        <div class="flex gap-2">
+            <button pButton type="butoon" label="Back to menu" severity="secondary" (click)="goBackToMenu()"></button>
+            <button pButton type="button" label="Clear Cart" severity="danger" (click)="clearCart()"></button>
+        </div>
+    </div>
+</div>
+@if(cartItems.length>0){
+
+    <div class="card">
+        <p-table [value]="cartItems">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cartItem>
+                <tr>
+                    <td>{{cartItem.menuItem.name}}</td>
+                    <td>${{cartItem.menuItem.price.toFixed(2)}}</td>
+                    <td>{{cartItem.quantity}}</td>
+                    <td>${{  (cartItem.menuItem.price * cartItem.quantity).toFixed(2) }}</td>
+                    <td>
+                        <div class="flex gap-2 flex-wrap">
+                            <button 
+                            pButton
+                            type="button"
+                            icon="pi pi-plus"
+                            severity="success"
+                            (click)="increaseQuantity(cartItem.menuItem.id)"                    
+                            >
+                            </button>
+                            <button pButton
+                            type="button"
+                            icon="pi pi-minus"
+                            severity="warn"
+                            (click)="decreaseQuantity(cartItem.menuItem.id)"
+                            ></button>
+                        </div>
+                    </td>
+                </tr>
+
+            </ng-template>
+        </p-table>
+    </div>
+}
+<div class="flex justify-content-end mb-4 ">
+    <div class="text-xl font-semibold">
+        Total :$ {{total.toFixed(2)}}
+    </div>
+    <div class="flex justify-content-end ml-20">
+        <button
+        pButton
+        type="button"
+        severity="success"
+        label="Process to checkout"
+        icon="pi pi-arrow-right"
+        (click)="goToCheckOut()"
+        [disabled]="cartItems.length===0"></button>
+
+    </div>
+
+</div>

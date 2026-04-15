@@ -1,0 +1,23 @@
+<div class="card">
+    <h1>Order Placed Successfully</h1>
+    <p class="mt-3">
+ Your Order for <strong>Table {{tableNumber ||'N/A'}}</strong> has been placed.
+    </p>
+     <p class="mt-2">
+    Selected payment mode: <strong>{{ paymentMode || 'N/A' }}</strong>
+  </p>
+  <p class="mt-2">
+    The kitchen has received your order and it will now appear in the staff workflow.
+  </p>
+<div class="mt-4">
+    <button
+        pButton
+        type="button"
+        (click)="backToMenu()"
+        label="Back to Menu"
+        icon="pi pi-arrow-left"
+    ></button>
+    <button pButton type="button"  (click)="goToKitchen()" label="go to kitchen"></button>
+</div>
+</div>
+

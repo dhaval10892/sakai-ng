@@ -16,7 +16,7 @@ import { Product, ProductService } from '@/app/pages/service/product.service';
             <div class="font-semibold text-xl mb-4">Carousel</div>
             <p-carousel [value]="products()" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="carouselResponsiveOptions">
                 <ng-template let-product #item>
-                    <div class="border border-surface rounded-border m-2 p-4">
+                    <div class="border border-surface rounded-border m-2 p-4 menu-card">
                         <div class="mb-4">
                             <div class="relative mx-auto">
                                 <img src="https://primefaces.org/cdn/primeng/images/demo/product/{{ product.image }}" [alt]="product.name" class="w-full rounded-border" />
