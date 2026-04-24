@@ -60,6 +60,7 @@ export class PublicMenu implements OnInit {
 
         this.menuService.getAllMenuItems().subscribe({
             next: (items) => {
+                console.log("hello");
                 this.availableMenuItem = items.filter((item) => item.available);
                 this.categories = ['All', ...new Set(this.availableMenuItem.map((item) => item.categoryName))];
                 this.filteredItems = [...this.availableMenuItem];

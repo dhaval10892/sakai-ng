@@ -5,7 +5,7 @@
 namespace RestaurantSaas.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class newmigration : Migration
+    public partial class newmigration1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -21,6 +21,8 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
+          var isSuperAdmin = User.IsInRole("SuperAdmin");
+
         var users = await _userManagementService.GetAllAsync();
         return Ok(users);
     }

@@ -12,4 +12,6 @@ public class ActivityLog
     public DateTime PerformedAt { get; set; } = DateTime.UtcNow;
 
     public string? Details { get; set; }
+    public int RestaurantId { get; set; }
+public Restaurant? Restaurant { get; set; }
 }

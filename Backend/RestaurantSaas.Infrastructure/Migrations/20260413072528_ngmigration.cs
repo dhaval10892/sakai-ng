@@ -5,7 +5,7 @@
 namespace RestaurantSaas.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class ngmigration : Migration
+    public partial class Ngmigration2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

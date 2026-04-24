@@ -1,19 +1,20 @@
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RestaurantSaas.Application.DTOs;
 using RestaurantSaas.Infrastructure.DependencyInjection;
 using RestaurantSaas.Infrastructure.Persistence;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using RestaurantSaaS.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; // keep false for local dev only
+        options.RequireHttpsMetadata = false; // local dev only
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -24,9 +25,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.NameIdentifier
         };
     });
+
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
     options.Password.RequireDigit = false;
@@ -41,11 +46,20 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 .AddSignInManager()
 .AddDefaultTokenProviders();
 
-builder.Services.AddAuthorization();
-// Add services to the container.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CurrentTenantService>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireSuperAdmin", p => p.RequireRole(AppRoles.SuperAdmin));
+    options.AddPolicy("RequireTenantAdmin", p => p.RequireRole(AppRoles.Admin));
+});
+
+// controllers + swagger
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddCors(options =>

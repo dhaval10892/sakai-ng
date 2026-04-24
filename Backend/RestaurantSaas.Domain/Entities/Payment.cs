@@ -12,5 +12,6 @@ public class Payment :AuditableEntity
     public string PaymentMethod{get;set;}= "Cash";
     public string PaymentStatus{get;set;}="Pending";
         public DateTime? PaidAt{get;set;}
-
+//public int RestaurantId { get; set; }
+//public Restaurant? Restaurant { get; set; }
 }

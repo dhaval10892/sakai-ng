@@ -7,4 +7,5 @@ public class UserDto
     public string DisplayName { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+     public int RestaurantId { get; set; }
 }

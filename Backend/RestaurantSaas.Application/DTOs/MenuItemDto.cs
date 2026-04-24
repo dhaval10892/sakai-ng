@@ -12,4 +12,5 @@ public class MenuItemDto
     public bool Available { get; set; }
 
     public string? ImageUrl { get; set; }
+     public int RestaurantId { get; set; }
 }

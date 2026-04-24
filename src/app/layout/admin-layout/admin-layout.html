@@ -1,0 +1,43 @@
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    
+    <!-- Logo / Title -->
+    <div class="sidebar-header">
+      <h2>🍽️ SaaS Admin</h2>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <a routerLink="/super-admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="pi pi-home"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/super-admin/restaurants" routerLinkActive="active">
+        <i class="pi pi-building"></i>
+        <span>Restaurants</span>
+      </a>
+    </nav>
+
+    <!-- Logout -->
+    <div class="sidebar-footer">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-sign-out"
+        label="Logout"
+        severity="danger"
+        class="w-full"
+        (click)="logout()">
+      </button>
+     
+    </div>
+
+  </aside>
+
+  <!-- Content -->
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>

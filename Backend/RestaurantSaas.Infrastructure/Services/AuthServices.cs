@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantSaaS.Application.DTOs;
 using RestaurantSaaS.Application.Interfaces;
+using RestaurantSaaS.Domain.Common;
 using RestaurantSaaS.Domain.Entities;
 
 namespace RestaurantSaaS.Infrastructure.Services;
@@ -26,35 +27,42 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public LoginResponseDto? Login(LoginRequestDto request)
+    public async Task<LoginResponseDto?> Login(LoginRequestDto request)
     {
-        var user = _userManager.Users.FirstOrDefault(x => x.UserName == request.Username);
+        var user = await _userManager.FindByNameAsync(request.Username);
+        if (user == null) return null;
+             var result = await _signInManager.CheckPasswordSignInAsync(
+            user, request.Password, lockoutOnFailure: false);
 
-        if (user == null)
-            return null;
-        if(!user.IsActive)
-            return null;
+        if (!result.Succeeded) return null;
 
-        var result = _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false)
-            .GetAwaiter()
-            .GetResult();
-
-        if (!result.Succeeded)
-            return null;
-
-        var roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
+        var roles = await _userManager.GetRolesAsync(user);
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, user.UserName ?? string.Empty),
-            new("displayName", user.DisplayName ?? string.Empty)
+            // Recommended standard claims
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
+            // Your existing claims
+            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new Claim("displayName", user.DisplayName ?? string.Empty),
         };
 
+        // Roles
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        // RestaurantId claim (ONLY for tenant users, not super admin)
+        var isSuperAdmin = roles.Contains(AppRoles.SuperAdmin);
 
+        if (!isSuperAdmin && user.RestaurantId.HasValue)
+        {
+            claims.Add(new Claim("RestaurantId", user.RestaurantId.Value.ToString()));
+        }
+        Console.WriteLine($"JWT RestaurantId: {user.RestaurantId}");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
@@ -69,7 +77,10 @@ public class AuthService : IAuthService
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Username = user.UserName ?? string.Empty,
-            Role = roles.FirstOrDefault() ?? string.Empty
+            Role = roles.FirstOrDefault() ?? string.Empty,
+            RestaurantId = user.RestaurantId,
+            Roles = roles.ToList()
         };
+        
     }
 }

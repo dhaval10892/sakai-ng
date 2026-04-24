@@ -9,8 +9,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AccordionModule } from 'primeng/accordion';
-import { empty, Observable } from 'rxjs';
-import { SelectModule, Select } from 'primeng/select';
+import {  Observable } from 'rxjs';
+import {  Select } from 'primeng/select';
 
 import { MenuItem } from '../../../../core/models/menu-items.model';
 import { MenuService } from '../../../../core/services/menu.service';

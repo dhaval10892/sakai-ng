@@ -13,7 +13,7 @@ namespace RestaurantSaas.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260413072404_newmigration")]
-    partial class newmigration
+    partial class Ngmigration2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

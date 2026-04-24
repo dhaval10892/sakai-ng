@@ -4,5 +4,5 @@ namespace RestaurantSaaS.Application.Interfaces;
 
 public interface IAuthService
 {
-    LoginResponseDto? Login(LoginRequestDto request);
+    Task<LoginResponseDto?> Login(LoginRequestDto request);
 }

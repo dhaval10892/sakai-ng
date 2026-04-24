@@ -1,0 +1,75 @@
+<div class="card">
+    <!-- Header -->
+
+    <!-- Table -->
+    <p-table #dt [value]="restaurants" [paginator]="true" [rows]="5" [globalFilterFields]="['name']">
+        <!-- Search -->
+        <ng-template pTemplate="caption">
+            <div class="flex justify-between">
+                <h2>Restaurants</h2>
+                <button pButton type="button" class="pi pi-dialog" label="+ Add New Restaurant" (click)="openAddDialog()"></button>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+                
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-r>
+            <tr>
+                <td>{{ r.name }}</td>
+
+                <td>
+                    <span [ngClass]="r.isActive ? 'text-green' : 'text-red'"> {{ r.isActive ? 'Active' : 'Inactive' }} </span>
+                </td>
+
+                <td>{{ r.createdAt | date:'short' }}</td>
+
+                @if(userRole ==='superadmin' ){
+                <td>
+                    <button class="mr-3" pButton icon="pi pi-pencil" (click)="edit(r)"></button>
+
+                    <button pButton icon="pi pi-trash" severity="danger" (click)="delete(r.id)"></button>
+                </td>
+                }
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-dialog [header]="isEditMode ? 'Edit Restaurant' :'Add New'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '400px' }">
+    <div class="field">
+        <label for="name" class="block mb-2 font-medium">Name</label>
+        <input id="name" type="text" class="w-full" pInputText [(ngModel)]="selectedRestaurant.name" />
+    </div>
+
+    <div class="field">
+        <label for="logo" class="block mb-2 font-medium">Logo URL</label>
+        <input id="logo" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.logoUrl" />
+    </div>
+
+    <div class="field">
+        <label for="username" class="block mb-2 font-medium">User Name</label>
+        <input id="username" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.AdminUsername" />
+    </div>
+
+    <div class="field">
+        <label for="password" class="block mb-2 font-medium">Password</label>
+        <input id="password" class="w-full" type="password" pPassword [(ngModel)]="selectedRestaurant.password" />
+    </div>
+
+    <div class="field">
+        <label for="IsActive" class="block mb-2 font-medium">Status</label>
+        <input id="IsActive" type="checkbox" [(ngModel)]="selectedRestaurant.isActive" />
+    </div>
+
+    <div class="flex justify-end mt-3">
+        <button pButton label="Save" (click)="save()"></button>
+    </div>
+</p-dialog>

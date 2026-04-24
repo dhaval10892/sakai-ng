@@ -11,6 +11,7 @@ namespace RestaurantSaaS.Api.Controllers;
 public class ActivityLogsController : ControllerBase
 {
     private readonly IActivityLogQueryService _activityLogQueryService;
+    
 
     public ActivityLogsController(IActivityLogQueryService activityLogQueryService)
     {

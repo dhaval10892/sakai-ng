@@ -18,8 +18,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     styleUrl: './login-page.scss'
 })
 export class LoginPage {
-
-username = '';
+    username = '';
     password = '';
     errorMessage = '';
     loading = false;
@@ -36,34 +35,38 @@ username = '';
         }
 
         this.loading = true;
-
-        this.authService.login({
-            username: this.username,
-            password: this.password
-        }).subscribe({
-            next: (response) => {
-                const role = response.role;
-
-                if (role === 'Admin') {
-                    this.router.navigate(['/dashboard']);
-                } else if (role === 'Kitchen') {
-                    this.router.navigate(['/kitchen']);
-                } else if (role === 'Waiter') {
-                    this.router.navigate(['/waiter']);
-                } else if (role === 'Billing') {
-                    this.router.navigate(['/billing']);
-                } else {
-                    this.router.navigate(['/']);
+        console.log(this.username, '  ', this.password);
+        this.authService
+            .login({
+                username: this.username,
+                password: this.password
+            })
+            .subscribe({
+                next: (response) => {
+                    const role = response.role;
+                    console.log(role, '');
+                    if (role === 'SuperAdmin') {
+                        this.router.navigate(['/super-admin']);
+                    } else if (role === 'Admin') {
+                        this.router.navigate(['/dashboard']);
+                    } else if (role === 'Kitchen') {
+                        this.router.navigate(['/kitchen']);
+                    } else if (role === 'Waiter') {
+                        this.router.navigate(['/waiter']);
+                    } else if (role === 'Billing') {
+                        this.router.navigate(['/billing']);
+                    } else {
+                        this.router.navigate(['/']);
+                    }
+                },
+                error: (error) => {
+                    console.error('Login failed', error);
+                    this.errorMessage = error?.error || 'Invalid username or password.';
+                    this.loading = false;
+                },
+                complete: () => {
+                    this.loading = false;
                 }
-            },
-            error: (error) => {
-                console.error('Login failed', error);
-                this.errorMessage = error?.error || 'Invalid username or password.';
-                this.loading = false;
-            },
-            complete: () => {
-                this.loading = false;
-            }
-        });
+            });
     }
 }

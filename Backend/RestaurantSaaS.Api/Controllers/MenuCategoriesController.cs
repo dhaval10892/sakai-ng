@@ -15,15 +15,20 @@ namespace RestaurantSaaS.Api.Controllers;
 public class MenuCategoriesController : ControllerBase
 {
     private readonly IMenuCategoryService _menuCatrgoriesService;
-
-    public MenuCategoriesController(IMenuCategoryService menuCategoryService)
+private CurrentTenantService _tenant;
+    public MenuCategoriesController(IMenuCategoryService menuCategoryService,CurrentTenantService tenant)
     {
         _menuCatrgoriesService=menuCategoryService;
+        _tenant=tenant;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
+           var restaurantId = _tenant.RestaurantId;
+
+        if (restaurantId == null)
+            return Unauthorized();
         return Ok(_menuCatrgoriesService.GetAll());
     }
     [HttpGet("{id}")]

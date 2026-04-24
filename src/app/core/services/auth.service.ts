@@ -20,7 +20,9 @@ export class AuthService {
         localStorage.setItem('token', response.token);
         localStorage.setItem('username', response.username);
         localStorage.setItem('role', response.role);
-      })
+        localStorage.setItem('roles', JSON.stringify(response.roles || []));
+        console.log(response,"Login Angular")
+      })  
     );
   }
 
@@ -37,7 +39,9 @@ export class AuthService {
   getRole(): string | null {
     return localStorage.getItem('role');
   }
-
+getRoles(): string[] {
+  return JSON.parse(localStorage.getItem('roles') || '[]');
+}
   getUsername(): string | null {
     const user=localStorage.getItem('username');
     return user!=undefined ?user.toUpperCase() :"";

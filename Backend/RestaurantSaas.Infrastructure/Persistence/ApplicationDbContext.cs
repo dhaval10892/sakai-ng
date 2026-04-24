@@ -11,10 +11,12 @@ namespace RestaurantSaas.Infrastructure.Persistence;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     private readonly ICurrentUserService _currentUserService;
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService)
+    private readonly CurrentTenantService _tenant;
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUserService, CurrentTenantService tenant)
     : base(options)
     {
         _currentUserService = currentUserService;
+        _tenant = tenant;
     }
 
     public DbSet<MenuCategory> MenuCategories => Set<MenuCategory>();
@@ -25,6 +27,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ApplicationUser> applicationUsers => Set<ApplicationUser>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+    public DbSet<Restaurant> Restaurants { get; set; }
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var entries = ChangeTracker.Entries<AuditableEntity>();
@@ -37,12 +40,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             {
                 entry.Entity.CreatedAt = DateTime.UtcNow;
                 entry.Entity.CreatedBy = username;
+
             }
 
             if (entry.State == EntityState.Modified)
             {
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
                 entry.Entity.UpdatedBy = username;
+            }
+        }
+        foreach (var entry in ChangeTracker.Entries<IHasRestaurant>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                if (_tenant.RestaurantId.HasValue)
+                {
+                    entry.Entity.RestaurantId = _tenant.RestaurantId.Value;
+                }
+                else
+                {
+                    if (entry.Entity.RestaurantId == 0)
+                        throw new Exception("RestaurantId is required.");
+                }
             }
         }
 
@@ -75,6 +94,19 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<MenuItem>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
+
+        modelBuilder.Entity<Order>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
+
+
+        modelBuilder.Entity<RestaurantTable>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
+
+        modelBuilder.Entity<MenuCategory>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
+
         modelBuilder.Entity<MenuCategory>(entity =>
         {
             entity.ToTable("MenuCategories");
@@ -83,6 +115,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             entity.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(100);
+
+            entity.HasOne(x => x.Restaurant)
+               .WithMany(r => r.Categories)
+                .HasForeignKey(x => x.RestaurantId);
         });
 
         modelBuilder.Entity<ActivityLog>(entity =>
@@ -107,6 +143,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
        entity.Property(x => x.Details)
            .HasMaxLength(1000);
+       entity.HasOne(x => x.Restaurant)
+          .WithMany()
+           .HasForeignKey(x => x.RestaurantId);
    });
 
         modelBuilder.Entity<MenuItem>(entity =>
@@ -127,6 +166,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 .WithMany(c => c.MenuItems)
                 .HasForeignKey(x => x.MenuCategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.Restaurant)
+                   .WithMany(r => r.MenuItems)
+                   .HasForeignKey(x => x.RestaurantId)
+                   .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<RestaurantTable>(entity =>
@@ -141,6 +185,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             entity.Property(x => x.Status)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            entity.HasOne(x => x.Restaurant)
+    .WithMany(r => r.Tables)
+    .HasForeignKey(x => x.RestaurantId);
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -158,6 +206,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
             entity.Property(x => x.Total)
                 .HasColumnType("decimal(18,2)");
+
+            entity.HasOne(x => x.Restaurant)
+                .WithMany(r => r.Orders)
+                .HasForeignKey(x => x.RestaurantId);
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -211,6 +263,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
          entity.Property(x => x.IsActive)
              .IsRequired()
              .HasDefaultValue(true);
+         entity.HasOne(x => x.Restaurant)
+     .WithMany()
+     .HasForeignKey(x => x.RestaurantId)
+     .OnDelete(DeleteBehavior.Restrict);
+     entity.HasOne(u => u.Restaurant)
+    .WithMany(r => r.Users)
+    .HasForeignKey(u => u.RestaurantId)
+    .OnDelete(DeleteBehavior.Restrict);
+         entity.HasQueryFilter(u =>
+             _tenant.RestaurantId == null
+             || u.RestaurantId == _tenant.RestaurantId);
      });
     }
 }

@@ -6,4 +6,5 @@ public class RestaurantTableDto
     public string Number{get;set;}=string.Empty;
     public int Seats{get;set;}
     public string Status{get;set;}=string.Empty;
+     public int RestaurantId { get; set; }
 }

@@ -12,8 +12,8 @@ using RestaurantSaas.Infrastructure.Persistence;
 namespace RestaurantSaas.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260413072528_ngmigration")]
-    partial class ngmigration
+    [Migration("20260416095644_multitenantsetuplevel1")]
+    partial class multitenantsetuplevel1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,32 @@ namespace RestaurantSaas.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Restaurant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Restaurants");
+                });
+
             modelBuilder.Entity("RestaurantSaaS.Domain.Entities.ActivityLog", b =>
                 {
                     b.Property<int>("Id")
@@ -192,7 +218,12 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("ActivityLogs", (string)null);
                 });
@@ -249,6 +280,9 @@ namespace RestaurantSaas.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("RestaurantId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -269,7 +303,59 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("RestaurantId");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("RestaurantSaaS.Domain.Entities.MenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Available")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("MenuCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuCategoryId");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuCategory", b =>
@@ -291,6 +377,9 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -298,49 +387,10 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("MenuCategories", (string)null);
-                });
-
-            modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Available")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MenuCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuCategoryId");
-
-                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantSaas.Domain.Entities.Order", b =>
@@ -353,6 +403,9 @@ namespace RestaurantSaas.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -368,6 +421,8 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -470,6 +525,9 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Seats")
                         .HasColumnType("int");
 
@@ -485,6 +543,8 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("RestaurantTables", (string)null);
                 });
@@ -540,7 +600,28 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuItem", b =>
+            modelBuilder.Entity("RestaurantSaaS.Domain.Entities.ActivityLog", b =>
+                {
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantSaaS.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany()
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantSaaS.Domain.Entities.MenuItem", b =>
                 {
                     b.HasOne("RestaurantSaas.Domain.Entities.MenuCategory", "MenuCategory")
                         .WithMany("MenuItems")
@@ -548,12 +629,42 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany("MenuItems")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("MenuCategory");
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuCategory", b =>
+                {
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany("Categories")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("RestaurantSaas.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany("Orders")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("RestaurantSaas.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("RestaurantSaas.Domain.Entities.MenuItem", "MenuItem")
+                    b.HasOne("RestaurantSaaS.Domain.Entities.MenuItem", "MenuItem")
                         .WithMany("OrderItems")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -581,14 +692,36 @@ namespace RestaurantSaas.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("RestaurantSaas.Domain.Entities.RestaurantTable", b =>
+                {
+                    b.HasOne("Restaurant", "Restaurant")
+                        .WithMany("Tables")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("MenuItems");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Tables");
+                });
+
+            modelBuilder.Entity("RestaurantSaaS.Domain.Entities.MenuItem", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuCategory", b =>
                 {
                     b.Navigation("MenuItems");
-                });
-
-            modelBuilder.Entity("RestaurantSaas.Domain.Entities.MenuItem", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("RestaurantSaas.Domain.Entities.Order", b =>

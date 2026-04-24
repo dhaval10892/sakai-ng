@@ -6,4 +6,6 @@ public class ApplicationUser : IdentityUser
 {
     public string DisplayName { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+    public int? RestaurantId { get; set; }
+public Restaurant? Restaurant { get; set; }
 }

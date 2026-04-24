@@ -13,14 +13,22 @@ namespace RestaurantSaaS.Api.Controllers;
 public class MenuController : ControllerBase
 {
     private readonly IMenuService _menuService;
+    private readonly CurrentTenantService _tenant;
 
-    public MenuController(IMenuService menuService)
+    public MenuController(IMenuService menuService, CurrentTenantService tenant)
     {
         _menuService = menuService;
+        _tenant = tenant;
     }
     [HttpGet]
     public IActionResult Get()
     {
+        var restaurantId = _tenant.RestaurantId;
+
+        if (restaurantId == null)
+            return Unauthorized();
+            
+
         var items = _menuService.GetAll();
         return Ok(items);
     }
@@ -44,10 +52,24 @@ public class MenuController : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] MenuItemDto dto)
     {
+        var restaurantId = _tenant.RestaurantId;
         if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Namr is required");
         if (string.IsNullOrWhiteSpace(dto.CategoryName)) return BadRequest("Category is required");
         if (dto.Price <= 0) return BadRequest("Price must be greter than Zero");
-        var created = _menuService.Create(dto);
+
+        if (restaurantId == null)
+            return Unauthorized();
+        var item = new MenuItemDto
+        {
+            Name = dto.Name,
+            MenuCategoryId = dto.MenuCategoryId,
+            CategoryName = dto.CategoryName,
+            Price = dto.Price,
+            Available = dto.Available,
+            ImageUrl = dto.ImageUrl,
+            RestaurantId = dto.RestaurantId
+        };
+        var created = _menuService.Create(item);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
     [HttpDelete("{id}")]
@@ -58,32 +80,32 @@ public class MenuController : ControllerBase
         return NoContent();
     }
     [HttpPost("upload")]
-[Authorize(Roles = "Admin")]
-public async Task<IActionResult> UploadImage(IFormFile file)
-{
-    if (file == null || file.Length == 0)
-        return BadRequest("No file uploaded.");
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UploadImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("No file uploaded.");
 
-    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
-    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-    if (!allowedExtensions.Contains(extension))
-        return BadRequest("Only image files are allowed.");
+        if (!allowedExtensions.Contains(extension))
+            return BadRequest("Only image files are allowed.");
 
-    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-    if (!Directory.Exists(uploadsFolder))
-        Directory.CreateDirectory(uploadsFolder);
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
 
-    var fileName = $"{Guid.NewGuid()}{extension}";
-    var filePath = Path.Combine(uploadsFolder, fileName);
+        var fileName = $"{Guid.NewGuid()}{extension}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
 
-    await using var stream = new FileStream(filePath, FileMode.Create);
-    await file.CopyToAsync(stream);
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await file.CopyToAsync(stream);
 
-    var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
+        var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
 
-    return Ok(new { imageUrl });
-}
+        return Ok(new { imageUrl });
+    }
 
 }

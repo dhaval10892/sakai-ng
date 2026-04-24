@@ -16,15 +16,16 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequestDto request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
         if (string.IsNullOrWhiteSpace(request.Username) ||
             string.IsNullOrWhiteSpace(request.Password))
         {
             return BadRequest("Username and password are required.");
         }
+        
 
-        var result = _authService.Login(request);
+        var result = await _authService.Login(request);
 
         if (result == null)
             return Unauthorized("Invalid username or password.");

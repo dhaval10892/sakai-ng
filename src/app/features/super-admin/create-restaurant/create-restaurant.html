@@ -1,0 +1,10 @@
+
+<form [formGroup]="formData" (ngSubmit)="submit()">
+  <label>Name</label>
+  <input formControlName="name" />
+
+  <label>Logo URL</label>
+  <input formControlName="logoUrl" />
+
+  <button type="submit">Create</button>
+</form>

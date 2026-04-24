@@ -8,21 +8,27 @@ namespace RestaurantSaaS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles ="Admin")]
+[Authorize(Roles = "Admin")]
 public class TableController : ControllerBase
 {
-    private readonly ITableService  _tableService;
-    public TableController(ITableService tableService)
+    private readonly ITableService _tableService;
+    private CurrentTenantService _tenant;
+    public TableController(ITableService tableService, CurrentTenantService tenant)
     {
-        _tableService=tableService;
+        _tableService = tableService;
+        _tenant = tenant;
     }
     [HttpGet]
     public IActionResult Get()
     {
-        var tables=_tableService.GetAll();
+        var restaurantId = _tenant.RestaurantId;
+
+        if (restaurantId == null)
+            return Unauthorized();
+        var tables = _tableService.GetAll();
         return Ok(tables);
     }
-     [HttpGet("{id}")]
+    [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
         var table = _tableService.GetById(id);
@@ -35,13 +41,13 @@ public class TableController : ControllerBase
     public IActionResult Create([FromBody] RestaurantTableDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Number))
-        return BadRequest("Table number is required.");
+            return BadRequest("Table number is required.");
 
-    if (dto.Seats <= 0)
-        return BadRequest("Seats must be greater than zero.");
+        if (dto.Seats <= 0)
+            return BadRequest("Seats must be greater than zero.");
 
-    if (string.IsNullOrWhiteSpace(dto.Status))
-        return BadRequest("Status is required.");
+        if (string.IsNullOrWhiteSpace(dto.Status))
+            return BadRequest("Status is required.");
 
         var created = _tableService.Create(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
@@ -51,14 +57,14 @@ public class TableController : ControllerBase
     public IActionResult Update(int id, [FromBody] RestaurantTableDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Number))
-        return BadRequest("Table number is required.");
+            return BadRequest("Table number is required.");
 
-    if (dto.Seats <= 0)
-        return BadRequest("Seats must be greater than zero.");
+        if (dto.Seats <= 0)
+            return BadRequest("Seats must be greater than zero.");
 
-    if (string.IsNullOrWhiteSpace(dto.Status))
-        return BadRequest("Status is required.");
-        
+        if (string.IsNullOrWhiteSpace(dto.Status))
+            return BadRequest("Status is required.");
+
         var updated = _tableService.Update(id, dto);
         if (!updated) return NotFound();
 

@@ -11,13 +11,20 @@ namespace RestaurantSaaS.Api.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;
-    public OrderController(IOrderService orderService)
+     private readonly CurrentTenantService _tenant;
+
+    public OrderController(IOrderService orderService,CurrentTenantService tenant)
     {
         _orderService = orderService;
+        _tenant=tenant;
     }
     [HttpGet]
     public IActionResult Get()
     {
+        var restaurantId = _tenant.RestaurantId;
+         if (restaurantId == null)
+            return Unauthorized();
+
         var orders = _orderService.GetAll();
         return Ok(orders);
     }
@@ -45,8 +52,19 @@ public class OrderController : ControllerBase
 
         if (dto.Items == null || !dto.Items.Any())
             return BadRequest("At least one order item is required.");
+            var order=new OrderDto
+            {
+                Id=dto.Id,
+                Table=dto.Table,
+                Total=dto.Total,
+                Status=dto.Status,
+                CreatedAt=dto.CreatedAt,
+                ItemsText=dto.ItemsText,
+                Items=dto.Items,
+                RestaurantId=dto.RestaurantId
+            };
 
-        var created = _orderService.Create(dto);
+        var created = _orderService.Create(order);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 

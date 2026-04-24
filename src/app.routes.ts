@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { authGuard } from './app/core/guards/auth.guard';
 import { roleGuard } from './app/core/guards/role.guard';
 
+import { AdminLayout } from './app/layout/admin-layout/admin-layout';
+
+
 export const routes: Routes = [
     {
         path: 'login',
@@ -23,6 +26,26 @@ export const routes: Routes = [
     {
         path: 'order-success',
         loadComponent: () => import('./app/features/checkout/pages/order-success/order-success').then((m) => m.OrderSuccess)
+    },
+    {
+        path: 'super-admin',
+        component: AdminLayout,
+        canActivate: [authGuard],
+        data: { roles: ['SuperAdmin'] },
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./app/features/super-admin/dashboard/dashboard').then((m) => m.Dashboard)
+            },
+            {
+                path: 'restaurants',
+                loadComponent: () => import('./app/features/super-admin/restaurants/restaurants').then((m) => m.Restaurants)
+            },
+            {
+                path: 'restaurants/create',
+                loadComponent: () => import('./app/features/super-admin/create-restaurant/create-restaurant').then((m) => m.CreateRestaurant)
+            }
+        ]
     },
 
     {

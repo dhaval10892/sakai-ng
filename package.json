@@ -21,6 +21,7 @@
         "@primeuix/themes": "^2.0.0",
         "@tailwindcss/postcss": "^4.1.11",
         "chart.js": "^4.5.1",
+        "jwt-decode": "^4.0.0",
         "primeclt": "^0.1.5",
         "primeflex": "^4.0.0",
         "primeicons": "^7.0.0",

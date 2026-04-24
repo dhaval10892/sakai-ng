@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurantSaas.Infrastructure.Migrations;
@@ -11,16 +12,34 @@ public class UserManagementService : IUserManagementService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IActivityLogService _activityLogService;
+    private readonly CurrentTenantService _tenant;
 
-    public UserManagementService(UserManager<ApplicationUser> userManager, IActivityLogService activityLogService)
+    public UserManagementService(UserManager<ApplicationUser> userManager, CurrentTenantService tenant, IActivityLogService activityLogService)
     {
+
         _activityLogService = activityLogService;
         _userManager = userManager;
+        _tenant = tenant;
     }
 
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
-        var users = await _userManager.Users.OrderBy(x => x.UserName).ToListAsync();
+        IQueryable<ApplicationUser> query = _userManager.Users;
+
+        if (!_tenant.IsSuperAdmin)
+        {
+            if (!_tenant.RestaurantId.HasValue)
+                throw new Exception("Tenant not found in token");
+
+            query = query.Where(u => u.RestaurantId == _tenant.RestaurantId);
+        }
+        Console.WriteLine($"TenantId: {_tenant.RestaurantId}");
+        Console.WriteLine($"IsSuperAdmin: {_tenant.IsSuperAdmin}");
+
+        var users = await query
+            .OrderBy(x => x.UserName)
+            .ToListAsync();
+
         var result = new List<UserDto>();
 
         foreach (var user in users)

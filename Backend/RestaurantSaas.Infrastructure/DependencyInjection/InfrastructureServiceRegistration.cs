@@ -34,6 +34,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IActivityLogService, ActivityLogService>();
         services.AddScoped<IActivityLogQueryService, ActivityLogQueryService>();
         services.AddScoped<IPaymentQueryService, PaymentQueryService>();
+        services.AddScoped<IRestaurantService, RestaurantService>();
 
         return services;
     }
