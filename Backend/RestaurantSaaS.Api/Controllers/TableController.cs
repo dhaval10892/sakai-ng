@@ -3,6 +3,7 @@ using RestaurantSaas.Application.interfaces;
 using RestaurantSaas.Infrastructure.Services;
 using RestaurantSaas.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using RestaurantSaaS.Api.Common;
 
 namespace RestaurantSaaS.Api.Controllers;
 
@@ -24,7 +25,7 @@ public class TableController : ControllerBase
         var restaurantId = _tenant.RestaurantId;
 
         if (restaurantId == null)
-            return Unauthorized();
+            return Unauthorized(new { message = "Restaurant context was not found for the current user." });
         var tables = _tableService.GetAll();
         return Ok(tables);
     }
@@ -32,7 +33,7 @@ public class TableController : ControllerBase
     public IActionResult GetById(int id)
     {
         var table = _tableService.GetById(id);
-        if (table == null) return NotFound();
+        if (table == null) return NotFound(new { message = "Table not found." });
 
         return Ok(table);
     }
@@ -41,13 +42,13 @@ public class TableController : ControllerBase
     public IActionResult Create([FromBody] RestaurantTableDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Number))
-            return BadRequest("Table number is required.");
+            return BadRequest(new { message = "Table number is required." });
 
         if (dto.Seats <= 0)
-            return BadRequest("Seats must be greater than zero.");
+            return BadRequest(new { message = "Seats must be greater than zero." });
 
         if (string.IsNullOrWhiteSpace(dto.Status))
-            return BadRequest("Status is required.");
+            return BadRequest(new { message = "Status is required." });
 
         var created = _tableService.Create(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
@@ -57,27 +58,27 @@ public class TableController : ControllerBase
     public IActionResult Update(int id, [FromBody] RestaurantTableDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Number))
-            return BadRequest("Table number is required.");
+            return BadRequest(new { message = "Table number is required." });
 
         if (dto.Seats <= 0)
-            return BadRequest("Seats must be greater than zero.");
+            return BadRequest(new { message = "Seats must be greater than zero." });
 
         if (string.IsNullOrWhiteSpace(dto.Status))
-            return BadRequest("Status is required.");
+            return BadRequest(new { message = "Status is required." });
 
         var updated = _tableService.Update(id, dto);
-        if (!updated) return NotFound();
+        if (!updated) return NotFound(new { message = "Table not found." });
 
-        return NoContent();
+        return Ok(ApiResponse<object?>.Create(null, "Table updated successfully."));
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
         var deleted = _tableService.Delete(id);
-        if (!deleted) return NotFound();
+        if (!deleted) return NotFound(new { message = "Table not found." });
 
-        return NoContent();
+        return Ok(ApiResponse<object?>.Create(null, "Table deleted successfully."));
     }
 
 }

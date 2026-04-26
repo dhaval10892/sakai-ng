@@ -27,7 +27,13 @@ public class AdminHeaderController : ControllerBase
             .Select(r => new
             {
                 r.Name,
-                r.LogoUrl
+                r.LogoUrl,
+                r.Country,
+                r.State,
+                r.CurrencyCode,
+                r.CurrencySymbol,
+                r.TaxName,
+                r.TaxRate
             })
             .FirstOrDefaultAsync();
 

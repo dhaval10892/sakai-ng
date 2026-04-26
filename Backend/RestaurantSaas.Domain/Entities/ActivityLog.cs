@@ -1,6 +1,6 @@
 namespace RestaurantSaaS.Domain.Entities;
 
-public class ActivityLog
+public class ActivityLog : IHasRestaurant
 {
     public int Id { get; set; }
 

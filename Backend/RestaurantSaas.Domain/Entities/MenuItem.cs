@@ -14,6 +14,8 @@ public class MenuItem : AuditableEntity,IHasRestaurant
 
     public decimal Price { get; set; }
     public bool Available { get; set; }
+    public int StockQuantity { get; set; }
+    public int LowStockThreshold { get; set; } = 5;
 
     public string? ImageUrl { get; set; }
     public int RestaurantId { get; set; }

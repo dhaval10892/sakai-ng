@@ -3,6 +3,7 @@ import { RestaurantTable } from '../models/table.model';
 import { environment } from '@/environments/environment';
 import { map, Observable, switchMap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,9 @@ export class TablesService {
   }
 
   updateTable(table: RestaurantTable): Observable<void> {
-    return this.http.put<void>(`${this.apiurl}/${table.id}`, table);
+    return this.http.put<ApiResponse<null>>(`${this.apiurl}/${table.id}`, table).pipe(
+      map(() => void 0)
+    );
   }
 
   deleteTable(id: number): Observable<void> {

@@ -32,7 +32,13 @@ public class SuperAdminRestaurantController : ControllerBase
         {
             Name = dto.Name,
             LogoUrl = dto.LogoUrl,
-            IsActive=dto.IsActive
+            IsActive=dto.IsActive,
+            Country = dto.Country,
+            State = dto.State,
+            CurrencyCode = dto.CurrencyCode,
+            CurrencySymbol = dto.CurrencySymbol,
+            TaxName = dto.TaxName,
+            TaxRate = dto.TaxRate
         };
 Console.WriteLine(dto +" Create Restaurant");
         _context.Restaurants.Add(restaurant);
@@ -58,7 +64,15 @@ Console.WriteLine(dto +" Create Restaurant");
     {
         Id = restaurant.Id,
         Name = restaurant.Name,
-        LogoUrl = restaurant.LogoUrl
+        LogoUrl = restaurant.LogoUrl,
+        IsActive = restaurant.IsActive,
+        Country = restaurant.Country,
+        State = restaurant.State,
+        CurrencyCode = restaurant.CurrencyCode,
+        CurrencySymbol = restaurant.CurrencySymbol,
+        TaxName = restaurant.TaxName,
+        TaxRate = restaurant.TaxRate,
+        CreatedAt = restaurant.CreatedAt
     });
     }
 

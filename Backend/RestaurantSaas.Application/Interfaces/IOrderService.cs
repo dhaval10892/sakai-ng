@@ -8,5 +8,6 @@ public interface IOrderService
     OrderDto? GetById(int id);
     OrderDto Create(OrderDto dto);
     bool Update(int id, OrderDto dto);
+    bool UpdateStatus(int id, string status);
     bool Delete(int id);
 }

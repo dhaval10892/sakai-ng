@@ -5,6 +5,7 @@ using RestaurantSaas.Infrastructure.Services;
 using RestaurantSaas.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using RestaurantSaaS.Application.Interfaces;
 using RestaurantSaaS.Infrastructure.Services;
 using RestaurantSaaS.Domain.Entities;
@@ -18,8 +19,9 @@ public static class InfrastructureServiceRegistration
     IConfiguration  configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options=>
-        
-           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))); 
+           options
+               .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+               .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning))); 
 
 
         services.AddScoped<IMenuService, MenuService>();

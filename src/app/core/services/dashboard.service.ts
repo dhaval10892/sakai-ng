@@ -58,9 +58,9 @@ export class DashboardService {
             return order.status === 'Served' && !existingPayment;
           }).length,
           totalPayments: payments.length,
-          cashPayments: paidPayments.filter((p) => p.paymentMethod === 'Cash').length,
-          cardPayments: paidPayments.filter((p) => p.paymentMethod === 'Card').length,
-          qrPayments: paidPayments.filter((p) => p.paymentMethod === 'QR Payment').length
+          cashPayments: paidPayments.filter((p) => (p.cashAmount || 0) > 0 || p.paymentMethod === 'Cash').length,
+          cardPayments: paidPayments.filter((p) => (p.cardAmount || 0) > 0 || p.paymentMethod === 'Card').length,
+          qrPayments: paidPayments.filter((p) => (p.qrAmount || 0) > 0 || p.paymentMethod === 'QR Payment').length
         };
       })
     );

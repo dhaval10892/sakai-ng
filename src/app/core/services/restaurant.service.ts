@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '@/environments/environment';
-import { Restaurants } from '@/app/features/super-admin/restaurants/restaurants';
-import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
+import { Restaurant } from '@/app/core/models/restaurant';
 
 @Injectable({ providedIn: 'root' })
 export class RestaurantService {
@@ -12,21 +11,21 @@ export class RestaurantService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  getAll(): Observable<Restaurant[]> {
+    return this.http.get<Restaurant[]>(this.apiUrl);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  create(data: Partial<Restaurant> & Record<string, unknown>): Observable<Restaurant> {
+    return this.http.post<Restaurant>(this.apiUrl, data);
   }
-  update(id:number,r:Restaurants):Observable<any>{
-    return this.http.put(`${this.apiUrl}/${id}`,r);
+  update(id:number,r:Partial<Restaurant>):Observable<void>{
+    return this.http.put<void>(`${this.apiUrl}/${id}`,r);
   }
-  delete(id:any):Observable<any>{
+  delete(id:number):Observable<void>{
 
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  getStats() {
+  getStats(): Observable<unknown> {
   return this.http.get(`${this.apiUrl}/stats`);
 }
 

@@ -1,10 +1,75 @@
+<form class="card flex flex-column gap-3" [formGroup]="formData" (ngSubmit)="submit()">
+  <h2 class="m-0">Create Restaurant</h2>
 
-<form [formGroup]="formData" (ngSubmit)="submit()">
-  <label>Name</label>
-  <input formControlName="name" />
+  <div>
+    <label class="block mb-2">Name</label>
+    <input pInputText formControlName="name" class="w-full" />
+  </div>
 
-  <label>Logo URL</label>
-  <input formControlName="logoUrl" />
+  <div>
+    <label class="block mb-2">Logo URL</label>
+    <input pInputText formControlName="logoUrl" class="w-full" />
+  </div>
 
-  <button type="submit">Create</button>
+  <div>
+    <label class="block mb-2">Country</label>
+    <p-select
+      [options]="countryOptions"
+      formControlName="country"
+      optionLabel="label"
+      optionValue="value"
+      class="w-full"
+      (onChange)="onCountryChange($event.value)">
+    </p-select>
+  </div>
+
+  <div>
+    <label class="block mb-2">State</label>
+    <p-select
+      [options]="stateOptions"
+      formControlName="state"
+      optionLabel="label"
+      optionValue="value"
+      class="w-full">
+    </p-select>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-6">
+      <label class="block mb-2">Currency Code</label>
+      <input pInputText formControlName="currencyCode" class="w-full" />
+    </div>
+    <div class="col-12 md:col-6">
+      <label class="block mb-2">Currency Symbol</label>
+      <input pInputText formControlName="currencySymbol" class="w-full" />
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-6">
+      <label class="block mb-2">Tax Name</label>
+      <input pInputText formControlName="taxName" class="w-full" />
+    </div>
+    <div class="col-12 md:col-6">
+      <label class="block mb-2">Tax Rate</label>
+      <p-inputNumber formControlName="taxRate" mode="decimal" [min]="0" [max]="1" [minFractionDigits]="2" [maxFractionDigits]="4" class="w-full"></p-inputNumber>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-12 md:col-4">
+      <label class="block mb-2">Admin Username</label>
+      <input pInputText formControlName="adminUsername" class="w-full" />
+    </div>
+    <div class="col-12 md:col-4">
+      <label class="block mb-2">Admin Name</label>
+      <input pInputText formControlName="adminName" class="w-full" />
+    </div>
+    <div class="col-12 md:col-4">
+      <label class="block mb-2">Password</label>
+      <input pInputText type="password" formControlName="password" class="w-full" />
+    </div>
+  </div>
+
+  <button pButton type="submit" label="Create Restaurant"></button>
 </form>

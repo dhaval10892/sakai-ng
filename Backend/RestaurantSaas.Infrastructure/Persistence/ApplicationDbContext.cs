@@ -27,12 +27,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ApplicationUser> applicationUsers => Set<ApplicationUser>();
     public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
+    public DbSet<BookingRequest> BookingRequests => Set<BookingRequest>();
     public DbSet<Restaurant> Restaurants { get; set; }
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var entries = ChangeTracker.Entries<AuditableEntity>();
 
-        foreach (var entry in entries)
+    private void ApplyAuditAndTenantRules()
+    {
+        var auditableEntries = ChangeTracker.Entries<AuditableEntity>();
+
+        foreach (var entry in auditableEntries)
         {
             var username = _currentUserService.Username ?? "system";
 
@@ -40,7 +42,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             {
                 entry.Entity.CreatedAt = DateTime.UtcNow;
                 entry.Entity.CreatedBy = username;
-
             }
 
             if (entry.State == EntityState.Modified)
@@ -49,6 +50,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 entry.Entity.UpdatedBy = username;
             }
         }
+
         foreach (var entry in ChangeTracker.Entries<IHasRestaurant>())
         {
             if (entry.State == EntityState.Added)
@@ -57,37 +59,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 {
                     entry.Entity.RestaurantId = _tenant.RestaurantId.Value;
                 }
-                else
+                else if (entry.Entity.RestaurantId == 0)
                 {
-                    if (entry.Entity.RestaurantId == 0)
-                        throw new Exception("RestaurantId is required.");
+                    throw new Exception("RestaurantId is required.");
                 }
             }
         }
+    }
 
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ApplyAuditAndTenantRules();
         return await base.SaveChangesAsync(cancellationToken);
     }
     public override int SaveChanges()
     {
-        var entries = ChangeTracker.Entries<AuditableEntity>();
-
-        foreach (var entry in entries)
-        {
-            var username = _currentUserService.Username ?? "system";
-
-            if (entry.State == EntityState.Added)
-            {
-                entry.Entity.CreatedAt = DateTime.UtcNow;
-                entry.Entity.CreatedBy = username;
-            }
-
-            if (entry.State == EntityState.Modified)
-            {
-                entry.Entity.UpdatedAt = DateTime.UtcNow;
-                entry.Entity.UpdatedBy = username;
-            }
-        }
-
+        ApplyAuditAndTenantRules();
         return base.SaveChanges();
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -100,11 +87,19 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         modelBuilder.Entity<Order>()
             .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
 
+        modelBuilder.Entity<OrderItem>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.Order!.RestaurantId == _tenant.RestaurantId);
+
+        modelBuilder.Entity<Payment>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.Order!.RestaurantId == _tenant.RestaurantId);
 
         modelBuilder.Entity<RestaurantTable>()
             .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
 
         modelBuilder.Entity<MenuCategory>()
+            .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
+
+        modelBuilder.Entity<BookingRequest>()
             .HasQueryFilter(x => !_tenant.RestaurantId.HasValue || x.RestaurantId == _tenant.RestaurantId);
 
         modelBuilder.Entity<MenuCategory>(entity =>
@@ -148,6 +143,42 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
            .HasForeignKey(x => x.RestaurantId);
    });
 
+        modelBuilder.Entity<BookingRequest>(entity =>
+        {
+            entity.ToTable("BookingRequests");
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.TableNumber)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(x => x.GuestName)
+                .IsRequired()
+                .HasMaxLength(120);
+
+            entity.Property(x => x.Phone)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            entity.Property(x => x.BookingTime)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(x => x.Occasion)
+                .HasMaxLength(80);
+
+            entity.Property(x => x.Arrangement)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.Status)
+                .IsRequired()
+                .HasMaxLength(30);
+
+            entity.HasOne(x => x.Restaurant)
+                .WithMany()
+                .HasForeignKey(x => x.RestaurantId);
+        });
+
         modelBuilder.Entity<MenuItem>(entity =>
         {
             entity.ToTable("MenuItems");
@@ -159,6 +190,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
             entity.Property(x => x.Price)
                 .HasColumnType("decimal(18,2)");
+            entity.Property(x => x.StockQuantity)
+                .HasDefaultValue(0);
+            entity.Property(x => x.LowStockThreshold)
+                .HasDefaultValue(5);
             entity.Property(x => x.ImageUrl)
 .HasMaxLength(500);
 
@@ -223,6 +258,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
             entity.Property(x => x.TotalPrice)
                 .HasColumnType("decimal(18,2)");
 
+            entity.Property(x => x.SpecialInstructions)
+                .HasMaxLength(180);
+
             entity.HasOne(x => x.Order)
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(x => x.OrderId)
@@ -233,12 +271,24 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
                 .HasForeignKey(x => x.MenuItemId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
-        modelBuilder.Entity<Payment>(entity =>
+modelBuilder.Entity<Payment>(entity =>
 {
     entity.ToTable("Payments");
     entity.HasKey(x => x.Id);
 
     entity.Property(x => x.Amount)
+        .HasColumnType("decimal(18,2)");
+
+    entity.Property(x => x.TipAmount)
+        .HasColumnType("decimal(18,2)");
+
+    entity.Property(x => x.CashAmount)
+        .HasColumnType("decimal(18,2)");
+
+    entity.Property(x => x.CardAmount)
+        .HasColumnType("decimal(18,2)");
+
+    entity.Property(x => x.QrAmount)
         .HasColumnType("decimal(18,2)");
 
     entity.Property(x => x.PaymentMethod)
@@ -275,5 +325,30 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
              _tenant.RestaurantId == null
              || u.RestaurantId == _tenant.RestaurantId);
      });
+
+        modelBuilder.Entity<Restaurant>(entity =>
+        {
+            entity.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(x => x.Country)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.State)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.CurrencyCode)
+                .HasMaxLength(10);
+
+            entity.Property(x => x.CurrencySymbol)
+                .HasMaxLength(10);
+
+            entity.Property(x => x.TaxName)
+                .HasMaxLength(50);
+
+            entity.Property(x => x.TaxRate)
+                .HasColumnType("decimal(18,4)");
+        });
     }
 }

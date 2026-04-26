@@ -1,18 +1,77 @@
-<div class="card">
+<section class="super-dashboard">
+    <div class="hero-card">
+        <div>
+            <span class="eyebrow">Super Admin Overview</span>
+            <h1>Multi-restaurant health, growth and expansion at a glance.</h1>
+            <p>Track active tenants, country spread, and platform growth without digging through restaurant records one by one.</p>
+        </div>
 
-  <div class="card">
-    <h3>{{stats.total}}</h3>
-    <p>Total Restaurants</p>
-  </div>
+        <div class="hero-metrics">
+            <article>
+                <strong>{{ stats.total }}</strong>
+                <span>Total restaurants</span>
+            </article>
+            <article>
+                <strong>{{ stats.countries }}</strong>
+                <span>Countries served</span>
+            </article>
+            <article>
+                <strong>{{ stats.newest }}</strong>
+                <span>Newest onboarded</span>
+            </article>
+        </div>
+    </div>
 
-  <div class="card">
-    <h3>{{ stats.active }}</h3>
-    <p>Active</p>
-  </div>
+    <div class="grid">
+        <div class="col-12 md:col-4">
+            <div class="card metric-card">
+                <small>Active</small>
+                <h3>{{ stats.active }}</h3>
+                <p>Restaurants currently enabled on the platform.</p>
+            </div>
+        </div>
+        <div class="col-12 md:col-4">
+            <div class="card metric-card">
+                <small>Inactive</small>
+                <h3>{{ stats.inactive }}</h3>
+                <p>Tenants that may need follow-up or reactivation.</p>
+            </div>
+        </div>
+        <div class="col-12 md:col-4">
+            <div class="card metric-card">
+                <small>Coverage</small>
+                <h3>{{ stats.countries }}</h3>
+                <p>Geographic distribution across your current tenant base.</p>
+            </div>
+        </div>
+    </div>
 
-  <div class="card">
-    <h3>{{ stats.inactive }}</h3>
-    <p>Inactive</p>
-  </div>
-
-</div>
+    <div class="grid">
+        <div class="col-12 lg:col-4">
+            <div class="card chart-card">
+                <div class="panel-title">
+                    <div>
+                        <h3>Restaurant Status</h3>
+                        <p>Active vs inactive tenants</p>
+                    </div>
+                </div>
+                <div class="chart-shell">
+                    <p-chart type="doughnut" [data]="statusChartData" [options]="statusChartOptions"></p-chart>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-8">
+            <div class="card chart-card">
+                <div class="panel-title">
+                    <div>
+                        <h3>Top Countries</h3>
+                        <p>Where your restaurant tenants are concentrated</p>
+                    </div>
+                </div>
+                <div class="chart-shell chart-shell-large">
+                    <p-chart type="bar" [data]="countryChartData" [options]="countryChartOptions"></p-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

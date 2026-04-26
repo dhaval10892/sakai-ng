@@ -1,3 +1,46 @@
 :host {
   display: block;
 }
+
+.user-list-header {
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.user-action-group {
+  flex-wrap: wrap;
+}
+
+.password-hint {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--restaurant-muted);
+}
+
+@media (max-width: 768px) {
+  .user-list-add-button {
+    width: 100%;
+  }
+
+  :host ::ng-deep .user-table .p-datatable-tbody > tr > td {
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  :host ::ng-deep .user-table .p-datatable-tbody > tr > td:last-child {
+    justify-content: flex-start;
+  }
+
+  .user-action-group button {
+    flex: 1 1 calc(50% - 0.5rem);
+    justify-content: center;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .dialog-actions button {
+    width: 100%;
+  }
+}

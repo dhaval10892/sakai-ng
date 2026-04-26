@@ -2,10 +2,10 @@
     <!-- Header -->
 
     <!-- Table -->
-    <p-table #dt [value]="restaurants" [paginator]="true" [rows]="5" [globalFilterFields]="['name']">
+    <p-table #dt [value]="restaurants" [paginator]="true" [rows]="5" [globalFilterFields]="['name']" responsiveLayout="stack" [breakpoint]="'768px'">
         <!-- Search -->
         <ng-template pTemplate="caption">
-            <div class="flex justify-between">
+            <div class="flex justify-between flex-wrap gap-2">
                 <h2>Restaurants</h2>
                 <button pButton type="button" class="pi pi-dialog" label="+ Add New Restaurant" (click)="openAddDialog()"></button>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
@@ -16,6 +16,9 @@
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th>Country</th>
+                <th>State</th>
+                <th>Currency</th>
                 <th>Status</th>
                 <th>Created</th>
                 <th>Actions</th>
@@ -24,16 +27,19 @@
 
         <ng-template pTemplate="body" let-r>
             <tr>
-                <td>{{ r.name }}</td>
+                <td data-label="Name">{{ r.name }}</td>
+                <td data-label="Country">{{ r.country }}</td>
+                <td data-label="State">{{ r.state }}</td>
+                <td data-label="Currency">{{ r.currencyCode }}</td>
 
-                <td>
+                <td data-label="Status">
                     <span [ngClass]="r.isActive ? 'text-green' : 'text-red'"> {{ r.isActive ? 'Active' : 'Inactive' }} </span>
                 </td>
 
-                <td>{{ r.createdAt | date:'short' }}</td>
+                <td data-label="Created">{{ r.createdAt | date:'short' }}</td>
 
                 @if(userRole ==='superadmin' ){
-                <td>
+                <td data-label="Actions">
                     <button class="mr-3" pButton icon="pi pi-pencil" (click)="edit(r)"></button>
 
                     <button pButton icon="pi pi-trash" severity="danger" (click)="delete(r.id)"></button>
@@ -43,7 +49,7 @@
         </ng-template>
     </p-table>
 </div>
-<p-dialog [header]="isEditMode ? 'Edit Restaurant' :'Add New'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '400px' }">
+<p-dialog [header]="isEditMode ? 'Edit Restaurant' :'Add New'" [(visible)]="dialogVisible" [modal]="true" [style]="{ width: '400px', maxWidth: '96vw' }" [breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
     <div class="field">
         <label for="name" class="block mb-2 font-medium">Name</label>
         <input id="name" type="text" class="w-full" pInputText [(ngModel)]="selectedRestaurant.name" />
@@ -55,8 +61,58 @@
     </div>
 
     <div class="field">
+        <label for="country" class="block mb-2 font-medium">Country</label>
+        <p-select
+            inputId="country"
+            [options]="countryOptions"
+            [(ngModel)]="selectedRestaurant.country"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+            (onChange)="onCountryChange(selectedRestaurant.country)">
+        </p-select>
+    </div>
+
+    <div class="field">
+        <label for="state" class="block mb-2 font-medium">State</label>
+        <p-select
+            inputId="state"
+            [options]="stateOptions"
+            [(ngModel)]="selectedRestaurant.state"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full">
+        </p-select>
+    </div>
+
+    <div class="field">
+        <label for="currencyCode" class="block mb-2 font-medium">Currency Code</label>
+        <input id="currencyCode" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.currencyCode" />
+    </div>
+
+    <div class="field">
+        <label for="currencySymbol" class="block mb-2 font-medium">Currency Symbol</label>
+        <input id="currencySymbol" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.currencySymbol" />
+    </div>
+
+    <div class="field">
+        <label for="taxName" class="block mb-2 font-medium">Tax Name</label>
+        <input id="taxName" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.taxName" />
+    </div>
+
+    <div class="field">
+        <label for="taxRate" class="block mb-2 font-medium">Tax Rate</label>
+        <p-inputNumber inputId="taxRate" [(ngModel)]="selectedRestaurant.taxRate" mode="decimal" [min]="0" [max]="1" [minFractionDigits]="2" [maxFractionDigits]="4" class="w-full"></p-inputNumber>
+    </div>
+
+    <div class="field">
         <label for="username" class="block mb-2 font-medium">User Name</label>
-        <input id="username" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.AdminUsername" />
+        <input id="username" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.adminUsername" />
+    </div>
+
+    <div class="field">
+        <label for="adminName" class="block mb-2 font-medium">Admin Name</label>
+        <input id="adminName" class="w-full" type="text" pInputText [(ngModel)]="selectedRestaurant.adminName" />
     </div>
 
     <div class="field">
@@ -69,7 +125,7 @@
         <input id="IsActive" type="checkbox" [(ngModel)]="selectedRestaurant.isActive" />
     </div>
 
-    <div class="flex justify-end mt-3">
+    <div class="flex justify-end mt-3 flex-wrap">
         <button pButton label="Save" (click)="save()"></button>
     </div>
 </p-dialog>

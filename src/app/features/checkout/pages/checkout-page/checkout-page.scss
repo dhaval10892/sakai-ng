@@ -1,0 +1,351 @@
+.checkout-shell {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 0 2rem;
+}
+
+.checkout-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.85fr);
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero-copy,
+.hero-card,
+.checkout-panel,
+.empty-card {
+  border-radius: 1.7rem;
+  border: 1px solid rgba(107, 82, 62, 0.12);
+  box-shadow: 0 24px 60px rgba(35, 24, 18, 0.08);
+}
+
+.hero-copy {
+  padding: clamp(1.4rem, 4vw, 2.7rem);
+  background: linear-gradient(145deg, #18110d 0%, #2d2018 58%, #4a301f 100%);
+  color: #fff;
+}
+
+.eyebrow,
+.mini-label {
+  display: inline-flex;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffd2ba;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hero-copy h1 {
+  margin: 1rem 0;
+  max-width: 11ch;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+.hero-copy p {
+  margin: 0;
+  max-width: 58ch;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+}
+
+.hero-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.highlight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 600;
+}
+
+.hero-card,
+.checkout-panel,
+.empty-card {
+  background: rgba(255, 252, 248, 0.92);
+}
+
+.hero-card {
+  padding: 1.25rem;
+}
+
+.hero-card-header,
+.hero-stat,
+.panel-header,
+.bill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-card-header {
+  margin-bottom: 1rem;
+}
+
+.hero-card-header .mini-label {
+  background: #1c1714;
+  color: #fff4ec;
+}
+
+.hero-stat-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.hero-stat {
+  padding: 1rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  border: 1px solid rgba(107, 82, 62, 0.1);
+}
+
+.hero-stat span,
+.field-label,
+.payment-option-card p,
+.bill-row span,
+.order-copy p,
+.empty-card p {
+  color: #6e625b;
+}
+
+.hero-stat.total {
+  background: linear-gradient(135deg, rgba(216, 108, 43, 0.12), rgba(239, 156, 97, 0.16));
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+  gap: 1.25rem;
+}
+
+.checkout-panel {
+  padding: 1.25rem;
+}
+
+.panel-header {
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-header h2,
+.empty-card h2 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+}
+
+.panel-header.compact {
+  margin-bottom: 1.25rem;
+}
+
+.order-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 1.15rem;
+  background: #fff;
+  border: 1px solid rgba(107, 82, 62, 0.1);
+}
+
+.order-copy h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.order-copy p {
+  margin: 0;
+}
+
+.item-detail-preview {
+  margin-top: 0.4rem !important;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.75rem;
+  background: #fff8f2;
+  color: #7b4b2a !important;
+  font-size: 0.9rem;
+}
+
+.row-total {
+  font-size: 1.05rem;
+  color: #1f1712;
+}
+
+.payment-select-wrap {
+  margin-bottom: 1rem;
+}
+
+.counter-payment-lock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, rgba(216, 108, 43, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(216, 108, 43, 0.22);
+}
+
+.counter-payment-lock strong {
+  display: block;
+  margin-top: 0.55rem;
+  color: #1f1712;
+  font-size: 1.1rem;
+}
+
+.counter-payment-lock p {
+  margin: 0.35rem 0 0;
+  color: #6e625b;
+  line-height: 1.5;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 700;
+}
+
+.payment-preview {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.payment-option-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  border-radius: 1.15rem;
+  background: #fff;
+  border: 1px solid rgba(107, 82, 62, 0.1);
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.payment-option-card:hover {
+  border-color: rgba(216, 108, 43, 0.26);
+  transform: translateY(-1px);
+}
+
+.payment-option-card.active {
+  border-color: rgba(216, 108, 43, 0.38);
+  box-shadow: 0 18px 32px rgba(216, 108, 43, 0.12);
+  transform: translateY(-1px);
+}
+
+.payment-option-card strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.payment-option-card p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.payment-option-card i {
+  color: #d86c2b;
+  font-size: 1.15rem;
+}
+
+.bill-card {
+  padding: 1rem 1.05rem;
+  border-radius: 1.2rem;
+  background: linear-gradient(180deg, #fff8f2, #fff);
+  border: 1px solid rgba(107, 82, 62, 0.1);
+  margin-bottom: 1rem;
+}
+
+.bill-row {
+  margin-bottom: 0.8rem;
+}
+
+.bill-row.grand {
+  margin-bottom: 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(107, 82, 62, 0.12);
+  font-size: 1.08rem;
+}
+
+.place-order-btn {
+  width: 100%;
+  min-height: 3.25rem;
+}
+
+.checkout-empty {
+  min-height: calc(100vh - 12rem);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.empty-card {
+  max-width: 34rem;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-card p {
+  margin: 1rem 0 1.5rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 1024px) {
+  .checkout-hero,
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .checkout-shell {
+    padding-bottom: 1rem;
+  }
+
+  .hero-copy,
+  .hero-card,
+  .checkout-panel,
+  .empty-card {
+    border-radius: 1.25rem;
+  }
+
+  .hero-copy h1 {
+    max-width: none;
+  }
+
+  .panel-header,
+  .order-row,
+  .counter-payment-lock {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .row-total {
+    align-self: flex-end;
+  }
+}

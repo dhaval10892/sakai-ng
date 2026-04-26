@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { AppUser } from '../../../../core/models/user.model';
 import { CreateUser } from '../../../../core/models/create-user.model';
 import { UserManagementService } from '../../../../core/services/user-management.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -50,7 +51,8 @@ export class UserList implements OnInit {
 
     constructor(
         private userManagementService: UserManagementService,
-        private rdf: ChangeDetectorRef
+        private rdf: ChangeDetectorRef,
+        private notificationService: NotificationService
     ) {}
 
     ngOnInit(): void {
@@ -64,7 +66,7 @@ export class UserList implements OnInit {
             next: (users) => {
                 this.users = users;
                 this.loading = false;
-                this.rdf.detectChanges();
+                this.rdf.markForCheck();
             },
             error: (error) => {
                 console.error('Failed to load users', error);
@@ -116,18 +118,25 @@ export class UserList implements OnInit {
 
     createUser(): void {
         if (!this.newUser.username.trim() || !this.newUser.displayName.trim() || !this.newUser.password.trim() || !this.newUser.role) {
-            alert('Please fill all required fields.');
+            this.notificationService.warn('Missing details', 'Please fill all required fields.');
+            return;
+        }
+
+        if (this.newUser.password.trim().length < 6) {
+            this.notificationService.warn('Weak password', 'Password must be at least 6 characters.');
             return;
         }
 
         this.userManagementService.createUser(this.newUser).subscribe({
             next: () => {
+                this.rdf.detectChanges();
                 this.createDialogVisible = false;
+                this.notificationService.success('User created', `${this.newUser.username} was created successfully.`);
                 this.loadUsers();
             },
             error: (error) => {
                 console.error('Failed to create user', error);
-                alert(error?.error || 'Failed to create user.');
+                this.notificationService.showApiError(error, 'Failed to create user.');
             }
         });
     }

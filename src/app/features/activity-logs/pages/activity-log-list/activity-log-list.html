@@ -1,7 +1,7 @@
 <div class="card">
     <div class="flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="m-0">Activity Logs</h2>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
             <button pButton type="button" label="Refresh" icon="pi pi-refresh" (click)="loadLogs()"></button>
 
             <button pButton type="button" label="Export CSV" icon="pi pi-download" severity="success" (click)="exportCsv()"></button>
@@ -42,6 +42,8 @@
   #logsTable
   [value]="logs"
   [loading]="loading"
+  responsiveLayout="stack"
+  [breakpoint]="'768px'"
   [paginator]="true"
   [rows]="pageSize"
   [totalRecords]="totalRecords"
@@ -64,15 +66,15 @@
 
         <ng-template pTemplate="body" let-log>
             <tr>
-                <td>{{ log.id }}</td>
-                <td>{{ log.action }}</td>
-                <td>
+                <td data-label="ID">{{ log.id }}</td>
+                <td data-label="Action">{{ log.action }}</td>
+                <td data-label="Entity">
                     <p-tag [value]="log.entityName" [severity]="getSeverity(log.entityName)"></p-tag>
                 </td>
-                <td>{{ log.entityId }}</td>
-                <td>{{ log.performedBy || 'system' }}</td>
-                <td>{{ log.performedAt | date:'medium' }}</td>
-                <td>{{ log.details || '-' }}</td>
+                <td data-label="Entity ID">{{ log.entityId }}</td>
+                <td data-label="Performed By">{{ log.performedBy || 'system' }}</td>
+                <td data-label="Performed At">{{ log.performedAt | date:'medium' }}</td>
+                <td data-label="Details">{{ log.details || '-' }}</td>
             </tr>
         </ng-template>
     </p-table>

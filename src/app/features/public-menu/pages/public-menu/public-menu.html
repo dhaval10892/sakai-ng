@@ -1,126 +1,437 @@
-<div class="card mb-4">
-    <div class="flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
-            <h2 class="m-0">Table {{ tableNumber }}</h2>
-            <p class="text-500 mb-0">Browse menu and add items to your cart</p>
-        </div>
-        <button pButton type="button" icon="pi pi-shopping-cart" [label]="'Cart (' + cartCount + ')'" (click)="openCart()"></button>
-    </div>
-</div>
-<div class="card mb-4">
-    <div class="flex flex-wrap gap-2">
-        <button
-            *ngFor="let category of categories"
-            pButton
-            type="button"
-            [label]="category"
-            [severity]="selectedCategory === category ? 'primary' : 'secondary'"
-            [outlined]="selectedCategory !== category"
-            (click)="filterByCategory(category)"
-        ></button>
-    </div>
-</div>
-<!--
-<div class="grid">
-    <div class="col-12 md:col-6 lg:col-4" *ngFor="let item of filteredItems">
-        <div class="card h-full flex flex-column">
-            <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.name" class="w-full border-round mb-3" style="height: 180px; object-fit: cover" />
+<div class="ue-public-shell">
+    <header class="ue-topbar">
+        <div class="ue-top-left">
+            <button type="button" class="ue-round-btn" aria-label="Open sidebar" (click)="toggleSidebar()">
+                <i class="pi pi-bars"></i>
+            </button>
 
-            <div class="flex-grow-1">
-                <div class="flex justify-content-between align-items-start mb-2">
-                    <h4 class="m-0">{{ item.name }}</h4>
-                    <p-tag [value]="item.categoryName"></p-tag>
+            <div class="ue-brand-wrap">
+                <span class="ue-brand-main">TableTap</span>
+                <small>Reserve and order</small>
+            </div>
+        </div>
+
+        @if (!isMarketplaceMode && !isQrMode) {
+            <button type="button" class="ue-link-btn" (click)="backToMarketplace()">All restaurants</button>
+        }
+
+        <button type="button" class="ue-location-pill" (click)="requestLiveLocation()">
+            <i class="pi pi-map-marker"></i>
+            <div class="ue-location-copy">
+                <strong>{{ locationPillLabel }}</strong>
+                <small>{{ liveLocationHint }}</small>
+            </div>
+            @if (locationStatus === 'loading') {
+                <i class="pi pi-spin pi-spinner"></i>
+            } @else {
+                <i class="pi pi-chevron-down"></i>
+            }
+        </button>
+
+        <div class="ue-search-wrap">
+            <i class="pi pi-search"></i>
+            @if (isMarketplaceMode) {
+                <input
+                    [(ngModel)]="restaurantSearch"
+                    type="text"
+                    placeholder="Search restaurants near you"
+                    (keyup.enter)="submitMarketplaceSearch()"
+                />
+                @if (restaurantSearch) {
+                    <button type="button" class="ue-search-clear" (click)="clearRestaurantSearch()">
+                        <i class="pi pi-times"></i>
+                    </button>
+                }
+            } @else {
+                <input [(ngModel)]="menuSearch" type="text" placeholder="Search this menu" />
+            }
+        </div>
+
+        <button type="button" class="ue-cart-btn ue-cart-btn--compact" aria-label="Open cart" (click)="openCart()">
+            <i class="pi pi-shopping-cart"></i>
+            @if (cartCount > 0) {
+                <strong>{{ cartCount }}</strong>
+            }
+        </button>
+    </header>
+
+    @if (isMarketplaceMode) {
+        <main class="ue-market-shell">
+            <aside class="ue-market-sidebar" [class.open]="sidebarOpen">
+                <div class="ue-sidebar-header">
+                    <h3>Browse</h3>
+                    <button type="button" class="ue-sidebar-close" aria-label="Close sidebar" (click)="closeSidebar()">
+                        <i class="pi pi-times"></i>
+                    </button>
                 </div>
 
-                <p class="text-xl font-semibold mb-3">${{ item.price.toFixed(2) }}</p>
-            </div>
+                <nav class="ue-sidebar-nav">
+                    @for (item of sidebarItems; track item.value) {
+                        <button type="button" [class.active]="selectedSidebarValue === item.value" (click)="selectSidebarItem(item)">
+                            <i [class]="item.icon"></i>
+                            <span>{{ item.label }}</span>
+                        </button>
+                    }
+                </nav>
+            </aside>
 
-            <button pButton type="button" label="Add to Cart" icon="pi pi-plus" (click)="addToCart(item)"></button>
-        </div>
-    </div>
-</div>-->
+            @if (sidebarOpen) {
+                <button type="button" class="ue-sidebar-backdrop" aria-label="Close sidebar" (click)="closeSidebar()"></button>
+            }
 
-<p-drawer [(visible)]="cartVisible" position="right" [style]="{ width: '20rem' }">
+            <section class="ue-market-content">
+                <section class="ue-feed-hero">
+                    <div>
+                        <span class="ue-eyebrow">Restaurants near you</span>
+                        <h1>Find local restaurants and book fast</h1>
+                        <p>{{ locationBannerText }}</p>
+                    </div>
+
+                    <div class="ue-live-card">
+                        <span class="ue-live-label">Live location</span>
+                        <strong>{{ locationPillLabel }}</strong>
+                        <p>{{ liveLocationHint }}</p>
+                        <button type="button" class="ue-live-action" (click)="requestLiveLocation()">Use my location</button>
+                    </div>
+                </section>
+
+                <section class="ue-category-strip">
+                    @for (item of topCategoryItems; track item.value) {
+                        <button type="button" class="ue-category-tile" [class.active]="selectedSidebarValue === item.value" (click)="selectSidebarItem(item)">
+                            <span class="ue-category-icon">
+                                <i [class]="item.icon"></i>
+                            </span>
+                            <span>{{ item.label }}</span>
+                        </button>
+                    }
+                </section>
+
+                <section class="ue-market-grid">
+                    <div class="ue-results-column">
+                        <div class="ue-section-title">
+                            <div>
+                                <span class="ue-eyebrow">Popular in your area</span>
+                                <h2>{{ filteredRestaurantCards.length }} restaurants</h2>
+                            </div>
+                        </div>
+
+                        <div class="ue-restaurant-feed-grid">
+                            @for (restaurant of filteredRestaurantCards; track restaurant.id) {
+                                <article class="ue-restaurant-tile ue-restaurant-tile--row">
+                                    <button type="button" class="ue-tile-click" (click)="viewRestaurant(restaurant.id)">
+                                        <div class="ue-restaurant-image">
+                                            @if (restaurant.previewImageUrl) {
+                                                <img [src]="restaurant.previewImageUrl" [alt]="restaurant.name" />
+                                            } @else {
+                                                <div class="ue-image-fallback">{{ restaurant.name.charAt(0) }}</div>
+                                            }
+
+                                            <span class="ue-time-badge">{{ getRestaurantDistanceText(restaurant) }}</span>
+                                        </div>
+
+                                        <div class="ue-restaurant-info">
+                                            <div class="ue-title-line">
+                                                <h3>{{ restaurant.name }}</h3>
+                                                <span class="ue-rating">{{ restaurant.rating | number:'1.1-1' }}</span>
+                                            </div>
+
+                                            <p>{{ restaurant.cuisineLabel }} | {{ restaurant.country || 'Nearby' }}{{ restaurant.state ? ', ' + restaurant.state : '' }}</p>
+                                            <small>{{ restaurant.reviewCount }} reviews | {{ restaurant.featuredItemName }}</small>
+                                        </div>
+                                    </button>
+
+                                    <div class="ue-restaurant-actions">
+                                        <button pButton type="button" label="Book table" (click)="openRestaurantBooking(restaurant.id)"></button>
+                                        <button pButton type="button" label="View menu" severity="secondary" [outlined]="true" (click)="viewRestaurant(restaurant.id)"></button>
+                                    </div>
+                                </article>
+                            }
+
+                            @if (filteredRestaurantCards.length === 0 && !loading) {
+                                <section class="ue-empty-state">
+                                    <h3>No restaurants found</h3>
+                                    <p>Try another restaurant name or choose a sidebar category.</p>
+                                </section>
+                            }
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    } @else {
+        <main class="ue-store-main">
+            <section class="ue-store-hero">
+                <div class="ue-store-cover ue-store-cover--compact">
+                    @if (storeGallery.length > 0) {
+                        <img [src]="storeGallery[0]" [alt]="storeHeaderTitle" />
+                    } @else {
+                        <div class="ue-image-fallback ue-image-fallback--compact">{{ storeHeaderTitle.charAt(0) }}</div>
+                    }
+                </div>
+
+                <div class="ue-store-details">
+                    <span class="ue-eyebrow">Open now</span>
+                    <h1>{{ storeHeaderTitle }}</h1>
+                    <p>{{ storeSubtitle }}</p>
+                    <div class="ue-store-meta ue-store-meta--pills">
+                        <span class="ue-meta-pill">{{ averageFoodRating | number:'1.1-1' }} <i class="pi pi-star-fill"></i> {{ reviewCount }} ratings</span>
+                        <span class="ue-meta-pill">{{ estimatedReadyMinutes }} min</span>
+                        <span class="ue-meta-pill">{{ restaurantSettings?.country || 'Restaurant network' }}{{ restaurantSettings?.state ? ', ' + restaurantSettings?.state : '' }}</span>
+                    </div>
+
+                    @if (!isQrMode) {
+                        <div class="ue-order-tabs">
+                            <button type="button" [class.active]="currentOrderType === 'DineIn'" (click)="setOrderType('DineIn')">Dine in</button>
+                            <button type="button" [class.active]="currentOrderType === 'Takeaway'" (click)="setOrderType('Takeaway')">Take away</button>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section class="ue-menu-layout">
+                <section class="ue-menu-content">
+                    @if (!isQrMode) {
+                        <section id="book-table" class="ue-store-booking-panel">
+                            <div class="ue-store-booking-copy">
+                                <span class="ue-eyebrow">Book a table</span>
+                                <h2>Reserve at {{ storeHeaderTitle }}</h2>
+                                <p>Enter the guest name, date, number of people, and a time slot.</p>
+                            </div>
+
+                            <div class="ue-store-booking-grid">
+                                <label class="field">
+                                    <span>Guest name</span>
+                                    <input [(ngModel)]="storeBookingForm.guestName" type="text" placeholder="Booking name" />
+                                </label>
+
+                                <label class="field">
+                                    <span>Date</span>
+                                    <input [(ngModel)]="storeBookingForm.date" [min]="bookingMinDate" type="date" />
+                                </label>
+
+                                <label class="field">
+                                    <span>People</span>
+                                    <select [(ngModel)]="storeBookingForm.seats">
+                                        @for (count of guestCountOptions; track count) {
+                                            <option [value]="count">{{ count }}</option>
+                                        }
+                                    </select>
+                                </label>
+
+                                <label class="field">
+                                    <span>Time slot</span>
+                                    <select [(ngModel)]="storeBookingForm.time">
+                                        @for (slot of timeSlots; track slot) {
+                                            <option [value]="slot">{{ slot }}</option>
+                                        }
+                                    </select>
+                                </label>
+                            </div>
+
+                            <button pButton type="button" label="Book table" icon="pi pi-calendar-plus" (click)="submitStoreBooking()" [disabled]="storeBookingDisabled"></button>
+                        </section>
+                    }
+
+                    <div class="ue-sticky-category-bar">
+                        @for (category of visualMenuCategories; track category.value) {
+                            <button type="button" class="ue-visual-category-btn" [class.active]="selectedCategory === category.value" (click)="filterByCategory(category.value)">
+                                <span class="ue-visual-category-icon">{{ category.icon }}</span>
+                                <span>{{ category.label }}</span>
+                            </button>
+                        }
+                    </div>
+
+                    <section class="ue-review-line">
+                        <div class="ue-review-summary">
+                            <span class="ue-eyebrow">Quick review</span>
+                            <strong>{{ averageFoodRating | number:'1.1-1' }}</strong>
+                            <span>{{ reviewCount }} ratings</span>
+                        </div>
+                        <div class="ue-review-actions">
+                            @for (score of [1, 2, 3, 4, 5]; track score) {
+                                <button type="button" class="ue-star-btn" [class.active]="quickReview.score >= score" (click)="quickReview.score = score" [attr.aria-label]="'Rate ' + score + ' stars'">
+                                    <i class="pi pi-star-fill"></i>
+                                </button>
+                            }
+
+                            @for (tag of reviewTags; track tag) {
+                                <button type="button" [class.active]="quickReview.tag === tag" (click)="setReviewTag(tag)">{{ tag }}</button>
+                            }
+
+                            <button pButton type="button" label="Send review" icon="pi pi-send" (click)="submitQuickReview()"></button>
+                        </div>
+                    </section>
+
+                    @if (!isQrMode && currentOrderType === 'DineIn') {
+                        <section class="ue-table-row">
+                            <strong>Choose a table</strong>
+                            <div>
+                                @for (table of availableTables; track table.id) {
+                                    <button type="button" [class.active]="selectedTableNumber === table.number" (click)="selectOptionalTable(table.number)">
+                                        {{ table.number }} | {{ table.seats }} seats
+                                    </button>
+                                }
+                            </div>
+                        </section>
+                    }
+
+                    <div class="ue-checkout-strip">
+                        <div>
+                            <span>{{ activeOrderLabel }}</span>
+                            <strong>{{ cartCount }} items | {{ currencySymbol }}{{ total.toFixed(2) }}</strong>
+                        </div>
+                        <button pButton type="button" label="Checkout" (click)="goToCheckout()" [disabled]="cartCount === 0"></button>
+                    </div>
+
+                    @if (loading) {
+                        <section class="ue-item-list">
+                            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+                                <div class="ue-item-card skeleton-card"></div>
+                            }
+                        </section>
+                    } @else {
+                        @for (section of menuSections; track section.category) {
+                            <section class="ue-menu-section">
+                                <h2>{{ section.category }}</h2>
+
+                                <div class="ue-item-list">
+                                    @for (item of section.items; track item.id) {
+                                        <article class="ue-item-card">
+                                            <div class="ue-item-copy">
+                                                <div class="ue-item-head">
+                                                    <h3>{{ item.name }}</h3>
+                                                    @if (getItemQuantity(item.id) > 0) {
+                                                        <span>{{ getItemQuantity(item.id) }} in cart</span>
+                                                    }
+                                                </div>
+                                                <p>{{ currentOrderType === 'Takeaway' ? 'Packed fresh for take away.' : 'Prepared fresh for dine in guests.' }}</p>
+                                                <strong>{{ currencySymbol }}{{ item.price.toFixed(2) }}</strong>
+                                            </div>
+
+                                            <div class="ue-item-media">
+                                                @if (item.imageUrl) {
+                                                    <img [src]="item.imageUrl" [alt]="item.name" />
+                                                } @else {
+                                                    <div class="ue-image-fallback">{{ item.name.charAt(0) }}</div>
+                                                }
+                                                <button type="button" class="ue-add-btn" (click)="addToCart(item)">
+                                                    <i class="pi pi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </article>
+                                    }
+                                </div>
+                            </section>
+                        }
+                    }
+                </section>
+
+                <aside class="ue-cart-aside">
+                    <h3>Your cart</h3>
+                    @if (cartItems.length === 0) {
+                        <div class="cart-empty small">
+                            <i class="pi pi-shopping-bag"></i>
+                            <p>Add dishes to start your order.</p>
+                        </div>
+                    } @else {
+                        @for (item of cartItems; track item.menuItem.id) {
+                            <div class="ue-mini-cart-row">
+                                <div>
+                                    <strong>{{ item.menuItem.name }}</strong>
+                                    <span>{{ item.quantity }} x {{ currencySymbol }}{{ item.menuItem.price.toFixed(2) }}</span>
+                                    <textarea
+                                        class="cart-item-detail-input"
+                                        rows="2"
+                                        maxlength="180"
+                                        [ngModel]="item.specialInstructions || ''"
+                                        (ngModelChange)="updateSpecialInstructions(item.menuItem.id, $event)"
+                                        placeholder="Details, e.g. less spicy"></textarea>
+                                </div>
+                                <div>
+                                    <button type="button" (click)="decreaseQuantity(item.menuItem.id)">-</button>
+                                    <span>{{ item.quantity }}</span>
+                                    <button type="button" (click)="increaseQuantity(item.menuItem.id)">+</button>
+                                </div>
+                            </div>
+                        }
+                        <div class="ue-cart-total">
+                            <span>Total</span>
+                            <strong>{{ currencySymbol }}{{ total.toFixed(2) }}</strong>
+                        </div>
+                        <button pButton type="button" label="Proceed to checkout" class="w-full" (click)="goToCheckout()"></button>
+                    }
+                </aside>
+            </section>
+        </main>
+    }
+</div>
+
+<p-drawer [(visible)]="cartVisible" position="right" [style]="{ width: '24rem', maxWidth: '100vw' }" styleClass="cart-drawer">
     <ng-template pTemplate="header">
-        <h3 class="m-0">Your Cart</h3>
+        <div class="drawer-header">
+            <div>
+                <h3 class="m-0">Your cart</h3>
+                <small>{{ storeHeaderTitle }} | {{ activeOrderLabel }}</small>
+            </div>
+        </div>
     </ng-template>
 
-    <div *ngIf="filteredItems.length === 0">
-        <p>Your cart is empty.</p>
-    </div>
+    @if (cartItems.length === 0) {
+        <div class="cart-empty">
+            <i class="pi pi-shopping-bag"></i>
+            <h4>Your cart is empty</h4>
+            <p>Add dishes to start your order.</p>
+        </div>
+    } @else {
+        <div class="cart-list">
+            @for (item of cartItems; track item.menuItem.id) {
+                <div class="cart-row">
+                    <div class="cart-row-copy">
+                        <strong>{{ item.menuItem.name }}</strong>
+                        <span>{{ item.quantity }} x {{ currencySymbol }}{{ item.menuItem.price.toFixed(2) }}</span>
+                        <textarea
+                            class="cart-item-detail-input"
+                            rows="2"
+                            maxlength="180"
+                            [ngModel]="item.specialInstructions || ''"
+                            (ngModelChange)="updateSpecialInstructions(item.menuItem.id, $event)"
+                            placeholder="Details, e.g. no onion"></textarea>
+                    </div>
 
-    <div *ngIf="filteredItems.length > 0" class="flex flex-column gap-3">
-        <div *ngFor="let item of cartItems" class="flex justify-content-between align-items-center border-bottom-1 surface-border pb-3">
-            <div>
-                <div class="font-medium">{{ item.menuItem.name }}</div>
-                <small>{{item.quantity}} X {{item.menuItem.price.toFixed(2) }}</small>
-            </div>
-
-            <div class="flex align-items-center gap-2">
-                <button pButton type="button" icon="pi pi-minus" class="p-button-sm p-button-text" (click)="decreaseQuantity(item.menuItem.id)"></button>
-
-                <span></span>
-
-                <button pButton type="button" icon="pi pi-plus" class="p-button-sm p-button-text" (click)="increaseQuantity(item.menuItem.id)"></button>
-            </div>
+                    <div class="cart-actions">
+                        <button pButton type="button" icon="pi pi-minus" text rounded (click)="decreaseQuantity(item.menuItem.id)"></button>
+                        <span>{{ item.quantity }}</span>
+                        <button pButton type="button" icon="pi pi-plus" text rounded (click)="increaseQuantity(item.menuItem.id)"></button>
+                    </div>
+                </div>
+            }
         </div>
 
-        <div class="mt-3">
-            <h4>Total: ${{ total.toFixed(2) }}</h4>
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Items</span>
+                <strong>{{ cartCount }}</strong>
+            </div>
+            <div class="summary-row">
+                <span>Service</span>
+                <strong>{{ activeOrderLabel }}</strong>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <strong>{{ currencySymbol }}{{ total.toFixed(2) }}</strong>
+            </div>
 
-            <button pButton type="button" label="Proceed to Checkout" class="w-full" (click)="goToCheckout()"></button>
+            <button pButton type="button" label="Proceed to checkout" class="w-full" (click)="goToCheckout()"></button>
         </div>
-    </div>
+    }
 </p-drawer>
-<div class="grid">
-  <div class="col-12">
-    <p-carousel
-      [value]="filteredItems"
-      [numVisible]="3"
-      [numScroll]="3"
-      [circular]="false"
-      [responsiveOptions]="carouselResponsiveOptions">
 
-      <ng-template pTemplate="item" let-item>
-        <div class="menu-card">
-
-          <!-- IMAGE -->
-          <div class="menu-image-wrapper">
-            <img
-              *ngIf="item.imageUrl"
-              [src]="item.imageUrl"
-              [alt]="item.name"
-              class="menu-image"
-            />
-          </div>
-
-          <!-- CONTENT -->
-          <div class="menu-content">
-
-            <div class="menu-header">
-              <h4>{{ item.name }}</h4>
-            </div>
-
-            <div class="menu-footer">
-              <span class="price">
-                ${{ item.price.toFixed(2) }}
-              </span>
-
-              <button
-                pButton
-                type="button"
-                icon="pi pi-shopping-cart"
-                label="Add"
-                class="p-button-sm add-btn"
-                (click)="addToCart(item)">
-              </button>
-            </div>
-
-          </div>
-
+@if (cartCount > 0) {
+    <button type="button" class="floating-cart ue-floating-cart" (click)="openCart()">
+        <div>
+            <strong>{{ cartCount }} items</strong>
+            <span>{{ activeOrderLabel }}</span>
         </div>
-      </ng-template>
-
-    </p-carousel>
-  </div>
-</div>
+        <strong>{{ currencySymbol }}{{ total.toFixed(2) }}</strong>
+    </button>
+}

@@ -51,11 +51,23 @@ public async Task<IActionResult> GetPaged([FromQuery] PaymentQueryDto query, [Fr
             if (dto.Amount <= 0)
                 return BadRequest("Amount must be greater than zero.");
 
+            if (dto.TipAmount < 0)
+                return BadRequest("Tip amount cannot be negative.");
+
             if (string.IsNullOrWhiteSpace(dto.PaymentMethod))
                 return BadRequest("Payment method is required.");
 
             if (string.IsNullOrWhiteSpace(dto.PaymentStatus))
                 return BadRequest("Payment status is required.");
+
+            var collectedTotal = dto.CashAmount + dto.CardAmount + dto.QrAmount;
+            if (collectedTotal <= 0)
+                return BadRequest("At least one payment amount is required.");
+
+            var existingPayment = _paymentService.GetAll().FirstOrDefault(x => x.OrderId == dto.OrderId);
+            if (existingPayment != null)
+                return Conflict("Payment already exists for this order.");
+
             var created = await _paymentService.Create(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -73,11 +85,18 @@ public async Task<IActionResult> GetPaged([FromQuery] PaymentQueryDto query, [Fr
         if (dto.Amount <= 0)
             return BadRequest("Amount must be greater than zero.");
 
+        if (dto.TipAmount < 0)
+            return BadRequest("Tip amount cannot be negative.");
+
         if (string.IsNullOrWhiteSpace(dto.PaymentMethod))
             return BadRequest("Payment method is required.");
 
         if (string.IsNullOrWhiteSpace(dto.PaymentStatus))
             return BadRequest("Payment status is required.");
+
+        var collectedTotal = dto.CashAmount + dto.CardAmount + dto.QrAmount;
+        if (collectedTotal <= 0)
+            return BadRequest("At least one payment amount is required.");
 
         var updated = _paymentService.Update(id, dto);
         if (!updated) return NotFound();

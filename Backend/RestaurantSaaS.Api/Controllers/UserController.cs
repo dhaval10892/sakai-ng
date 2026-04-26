@@ -56,7 +56,10 @@ public class UsersController : ControllerBase
         if (!result.Success)
             return BadRequest(result.Message);
 
-        return CreatedAtAction(nameof(GetById), new { id = result.User!.Id }, result.User);
+        if (result.User == null)
+            return StatusCode(StatusCodes.Status500InternalServerError, "User was created but could not be loaded.");
+
+        return CreatedAtAction(nameof(GetById), new { id = result.User.Id }, result.User);
     }
     [HttpPut("{id}/status")]
     [Authorize(Roles = "Admin")]

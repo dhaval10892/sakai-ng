@@ -19,7 +19,13 @@ public class RestaurantService : IRestaurantService
         var restaurant = new Restaurant
         {
             Name = rdto.Name,
-            LogoUrl = rdto.LogoUrl
+            LogoUrl = rdto.LogoUrl,
+            Country = rdto.Country,
+            State = rdto.State,
+            CurrencyCode = rdto.CurrencyCode,
+            CurrencySymbol = rdto.CurrencySymbol,
+            TaxName = rdto.TaxName,
+            TaxRate = rdto.TaxRate
         };
 
         _context.Restaurants.Add(restaurant);
@@ -49,6 +55,12 @@ public class RestaurantService : IRestaurantService
         restaurant.Name = dto.Name;
         restaurant.LogoUrl = dto.LogoUrl;
         restaurant.IsActive = dto.IsActive;
+        restaurant.Country = dto.Country;
+        restaurant.State = dto.State;
+        restaurant.CurrencyCode = dto.CurrencyCode;
+        restaurant.CurrencySymbol = dto.CurrencySymbol;
+        restaurant.TaxName = dto.TaxName;
+        restaurant.TaxRate = dto.TaxRate;
 
         await _context.SaveChangesAsync();
         return true;
@@ -72,6 +84,12 @@ public class RestaurantService : IRestaurantService
             Name = r.Name,
             LogoUrl = r.LogoUrl,
             IsActive = r.IsActive,
+            Country = r.Country,
+            State = r.State,
+            CurrencyCode = r.CurrencyCode,
+            CurrencySymbol = r.CurrencySymbol,
+            TaxName = r.TaxName,
+            TaxRate = r.TaxRate,
             CreatedAt = r.CreatedAt
         };
     }

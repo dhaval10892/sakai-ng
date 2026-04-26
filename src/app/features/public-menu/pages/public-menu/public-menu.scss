@@ -1,65 +1,992 @@
-/* CARD */
-.menu-card {
-  border-radius: 16px;
-  overflow: hidden;
-  background: #ffffff;
-  margin: 10px;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.ue-public-shell {
+    min-height: 100vh;
+    background: var(--restaurant-bg);
+    color: var(--restaurant-ink);
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.menu-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+.ue-topbar,
+.ue-market-sidebar,
+.ue-feed-hero,
+.ue-live-card,
+.ue-restaurant-tile,
+.ue-booking-card,
+.ue-store-hero,
+.ue-store-booking-panel,
+.ue-review-line,
+.ue-table-row,
+.ue-checkout-strip,
+.ue-menu-section,
+.ue-cart-aside,
+.ue-empty-state {
+    background: var(--restaurant-surface);
+    border: 1px solid rgba(217, 207, 191, 0.85);
+    box-shadow: var(--restaurant-shadow);
 }
 
-/* IMAGE */
-.menu-image-wrapper {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
+.ue-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    display: grid;
+    grid-template-columns: auto auto auto minmax(280px, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-width: 0 0 1px;
+    background: rgba(255, 253, 250, 0.94);
+    backdrop-filter: blur(16px);
 }
 
-.menu-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 🔥 MOST IMPORTANT */
-  display: block;
+.ue-top-left,
+.ue-location-pill,
+.ue-search-wrap,
+.ue-cart-btn,
+.ue-title-line,
+.ue-store-meta,
+.ue-order-tabs,
+.ue-menu-layout,
+.ue-checkout-strip,
+.ue-review-line,
+.ue-table-row,
+.ue-mini-cart-row,
+.ue-cart-total,
+.ue-item-head,
+.ue-restaurant-actions,
+.cart-row,
+.summary-row,
+.cart-actions {
+    display: flex;
+    align-items: center;
 }
 
-/* CONTENT */
-.menu-content {
-  padding: 16px;
+.ue-top-left {
+    gap: 0.85rem;
 }
 
-/* HEADER */
-.menu-header h4 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2c3e50;
+.ue-round-btn,
+.ue-sidebar-close,
+.ue-search-clear,
+.ue-link-btn,
+.ue-live-action,
+.ue-category-tile,
+.ue-sticky-category-bar button,
+.ue-order-tabs button,
+.ue-review-actions button,
+.ue-table-row button,
+.ue-add-btn,
+.ue-mini-cart-row button,
+.floating-cart,
+.ue-cart-btn,
+.ue-location-pill {
+    border: 0;
+    cursor: pointer;
 }
 
-/* FOOTER */
-.menu-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
+.ue-round-btn,
+.ue-sidebar-close,
+.ue-search-clear {
+    display: inline-grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 999px;
+    background: var(--restaurant-surface-soft);
+    color: var(--restaurant-ink);
 }
 
-/* PRICE TAG */
-.price {
-  background: #d1fae5;
-  color: #065f46;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
+.ue-brand-wrap {
+    display: grid;
+    gap: 0.1rem;
 }
 
-/* BUTTON */
-.add-btn {
-  border-radius: 20px;
-  padding: 6px 14px;
+.ue-brand-main {
+    font-size: 1.7rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+.ue-brand-wrap small {
+    color: var(--restaurant-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ue-link-btn {
+    border-radius: 999px;
+    padding: 0.8rem 1rem;
+    background: var(--restaurant-chip);
+    font-weight: 700;
+}
+
+.ue-location-pill {
+    gap: 0.8rem;
+    justify-content: space-between;
+    min-height: 3.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 1.4rem;
+    background: var(--restaurant-surface-soft);
+}
+
+.ue-location-copy {
+    display: grid;
+    justify-items: start;
+    min-width: 0;
+}
+
+.ue-location-copy strong,
+.ue-location-copy small {
+    white-space: nowrap;
+}
+
+.ue-location-copy small {
+    color: var(--restaurant-muted);
+    font-size: 0.8rem;
+}
+
+.ue-search-wrap {
+    gap: 0.75rem;
+    min-height: 3.5rem;
+    border-radius: 1.6rem;
+    padding: 0 1rem;
+    background: var(--restaurant-surface-soft);
+}
+
+.ue-search-wrap input {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    outline: 0;
+    font: inherit;
+    font-size: 1rem;
+}
+
+.ue-cart-btn {
+    position: relative;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    min-height: 3rem;
+    border-radius: 999px;
+    padding: 0;
+    background: var(--restaurant-accent);
+    color: var(--restaurant-accent-contrast);
+    font-weight: 800;
+    justify-self: end;
+    box-shadow: 0 12px 24px rgba(255, 111, 97, 0.24);
+}
+
+.ue-cart-btn strong {
+    position: absolute;
+    top: -0.2rem;
+    right: -0.2rem;
+    display: grid;
+    place-items: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    background: var(--restaurant-ink);
+    color: var(--restaurant-accent-contrast);
+    font-size: 0.72rem;
+    line-height: 1;
+    border: 2px solid var(--restaurant-surface);
+}
+
+.ue-market-shell,
+.ue-store-main {
+    max-width: 1480px;
+    margin: 0 auto;
+}
+
+.ue-market-shell {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.ue-market-sidebar {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    border-radius: 2rem;
+    padding: 1.1rem;
+}
+
+.ue-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.ue-sidebar-header h3,
+.ue-booking-card h2,
+.ue-section-title h2,
+.ue-menu-section h2,
+.ue-store-details h1,
+.ue-restaurant-info h3 {
+    margin: 0;
+    letter-spacing: -0.04em;
+}
+
+.ue-sidebar-nav {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.ue-sidebar-nav button {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    border-radius: 1.2rem;
+    padding: 0.9rem 1rem;
+    background: transparent;
+    color: var(--restaurant-ink);
+    font-weight: 700;
+    text-align: left;
+}
+
+.ue-sidebar-nav button.active,
+.ue-category-tile.active,
+.ue-sticky-category-bar button.active,
+.ue-menu-sidebar button.active,
+.ue-order-tabs button.active,
+.ue-review-actions button.active,
+.ue-table-row button.active {
+    background: var(--restaurant-accent);
+    color: var(--restaurant-accent-contrast);
+}
+
+.ue-sidebar-backdrop {
+    display: none;
+}
+
+.ue-market-content {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.ue-feed-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.9fr);
+    gap: 1rem;
+    border-radius: 2.2rem;
+    padding: 1.5rem;
+}
+
+.ue-eyebrow,
+.ue-live-label {
+    display: inline-flex;
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem;
+    background: #edf4ea;
+    color: #526453;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ue-feed-hero h1 {
+    margin: 0.6rem 0;
+    font-size: clamp(2.8rem, 5vw, 4.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+}
+
+.ue-feed-hero p,
+.ue-live-card p,
+.ue-restaurant-info p,
+.ue-restaurant-info small,
+.ue-store-details p,
+.ue-item-copy p,
+.cart-row-copy span,
+.summary-row span,
+.ue-mini-cart-row span {
+    color: #616861;
+    line-height: 1.5;
+}
+
+.ue-live-card {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    border-radius: 1.8rem;
+    padding: 1.2rem;
+    background: linear-gradient(180deg, #faf8f1 0%, #f2f4ec 100%);
+}
+
+.ue-live-card strong {
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+}
+
+.ue-live-action {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 0.8rem 1rem;
+    background: var(--restaurant-accent);
+    color: var(--restaurant-accent-contrast);
+    font-weight: 800;
+}
+
+.ue-category-strip {
+    display: flex;
+    gap: 0.9rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.ue-category-tile {
+    display: grid;
+    place-items: center;
+    gap: 0.5rem;
+    min-width: 7.2rem;
+    border-radius: 1.6rem;
+    padding: 0.95rem 0.9rem;
+    background: var(--restaurant-surface);
+    border: 1px solid rgba(217, 207, 191, 0.85);
+    font-weight: 700;
+}
+
+.ue-category-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 999px;
+    background: var(--restaurant-surface-soft);
+}
+
+.ue-market-grid {
+    display: block;
+}
+
+.ue-section-title {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.ue-section-title.compact {
+    margin-bottom: 1rem;
+}
+
+.ue-restaurant-feed-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.ue-restaurant-tile {
+    display: grid;
+    gap: 0.8rem;
+    border-radius: 1.9rem;
+    padding: 0.95rem 1rem;
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.ue-tile-click {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.ue-restaurant-image,
+.ue-item-media,
+.ue-store-cover {
+    position: relative;
+    overflow: hidden;
+    background: #f3f3ee;
+    border-radius: 1.5rem;
+}
+
+.ue-restaurant-image {
+    aspect-ratio: 5 / 4;
+    max-width: 12rem;
+}
+
+.ue-restaurant-image img,
+.ue-item-media img,
+.ue-store-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ue-image-fallback {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 11rem;
+    background: linear-gradient(135deg, #ff8b7f, #ff6f61);
+    color: var(--restaurant-accent-contrast);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.ue-image-fallback--compact {
+    min-height: 10.5rem;
+}
+
+.ue-time-badge {
+    position: absolute;
+    right: 0.85rem;
+    bottom: 0.85rem;
+    border-radius: 999px;
+    background: var(--restaurant-surface);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 900;
+    box-shadow: 0 8px 20px rgba(16, 16, 16, 0.15);
+}
+
+.ue-title-line {
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0 0 0.3rem;
+}
+
+.ue-title-line h3,
+.ue-item-card h3 {
+    font-size: 1.1rem;
+}
+
+.ue-rating {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    background: #f3f3ee;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.ue-restaurant-actions {
+    gap: 0.65rem;
+    justify-content: flex-start;
+}
+
+.field {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.field span {
+    color: #616861;
+    font-size: 0.92rem;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    min-height: 3.35rem;
+    border: 1px solid #ddd9ce;
+    border-radius: 1.2rem;
+    background: #f7f6f1;
+    padding: 0 1rem;
+    font: inherit;
+}
+
+.ue-store-main {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.ue-store-hero {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1.25rem;
+    border-radius: 1.8rem;
+    padding: 1.1rem 1.2rem;
+}
+
+.ue-store-cover--compact {
+    aspect-ratio: 1 / 1;
+    max-width: 11rem;
+    justify-self: start;
+}
+
+.ue-store-details {
+    display: grid;
+    align-content: center;
+    gap: 0.8rem;
+}
+
+.ue-store-details h1 {
+    font-size: clamp(1.9rem, 3vw, 2.9rem);
+}
+
+.ue-store-meta {
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    color: #555;
+    font-weight: 700;
+}
+
+.ue-store-meta--pills {
+    gap: 0.65rem;
+}
+
+.ue-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    padding: 0.55rem 0.85rem;
+    background: #f5f3ec;
+    color: #3e433f;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.ue-order-tabs {
+    gap: 0.65rem;
+}
+
+.ue-order-tabs button,
+.ue-review-actions button,
+.ue-table-row button,
+.ue-sticky-category-bar button {
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    background: #f3f3ee;
+    font-weight: 700;
+}
+
+.ue-menu-layout {
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.ue-cart-aside h3 {
+    margin: 0 0 0.2rem;
+    font-size: 1.1rem;
+}
+
+.ue-menu-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.ue-store-booking-panel {
+    display: grid;
+    gap: 1rem;
+    border-radius: 1.8rem;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.ue-store-booking-copy {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.ue-store-booking-copy h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.3vw, 2.2rem);
+    letter-spacing: -0.04em;
+}
+
+.ue-store-booking-copy p {
+    margin: 0;
+    color: #616861;
+}
+
+.ue-store-booking-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ue-sticky-category-bar {
+    position: sticky;
+    top: 5.8rem;
+    z-index: 60;
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0.25rem 0 1rem;
+    background: linear-gradient(180deg, #fbfbf7 0%, rgba(251, 251, 247, 0.94) 100%);
+}
+
+.ue-visual-category-btn {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    min-width: 5.4rem;
+    border-radius: 1rem;
+    border: 1px solid #ece9df;
+    padding: 0.75rem 0.8rem;
+    background: var(--restaurant-surface);
+    color: var(--restaurant-ink);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.ue-visual-category-btn.active {
+    background: var(--restaurant-accent-soft);
+    border-color: rgba(255, 111, 97, 0.35);
+    color: var(--restaurant-ink);
+    box-shadow: 0 10px 24px rgba(255, 111, 97, 0.18);
+}
+
+.ue-visual-category-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 0.95rem;
+    background: #fff4ef;
+    font-size: 1.45rem;
+}
+
+.ue-review-line,
+.ue-table-row,
+.ue-checkout-strip {
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 1.8rem;
+    padding: 1rem 1.1rem;
+}
+
+.ue-review-actions,
+.ue-table-row > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.ue-review-summary {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.ue-review-summary strong {
+    font-size: 2rem;
+    letter-spacing: -0.05em;
+}
+
+.ue-star-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    background: var(--restaurant-surface-soft);
+    color: var(--restaurant-subtle);
+}
+
+.ue-star-btn.active {
+    background: var(--restaurant-accent-soft);
+    color: var(--restaurant-accent);
+}
+
+.ue-checkout-strip span {
+    display: block;
+    color: #616861;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.ue-checkout-strip strong {
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.ue-menu-section {
+    display: grid;
+    gap: 1rem;
+    border-radius: 1.8rem;
+    padding: 1.2rem;
+    margin-top: 1.2rem;
+}
+
+.ue-item-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ue-item-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 7.25rem;
+    gap: 1rem;
+    min-height: 9rem;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(217, 207, 191, 0.85);
+    background: var(--restaurant-surface);
+}
+
+.ue-item-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ue-item-copy strong {
+    margin-top: auto;
+}
+
+.ue-item-head {
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.ue-item-head span {
+    border-radius: 999px;
+    background: var(--restaurant-accent-soft);
+    padding: 0.35rem 0.65rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.ue-item-media {
+    min-height: 7.25rem;
+}
+
+.ue-add-btn {
+    position: absolute;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: var(--restaurant-surface);
+    color: var(--restaurant-accent);
+    box-shadow: 0 8px 18px rgba(16, 16, 16, 0.16);
+}
+
+.ue-cart-aside {
+    position: sticky;
+    top: 6rem;
+    width: 20rem;
+    flex: 0 0 20rem;
+    border-radius: 1.8rem;
+    padding: 1.25rem;
+}
+
+.ue-mini-cart-row {
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #ece9df;
+}
+
+.ue-mini-cart-row button {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 999px;
+    background: #f3f3ee;
+    font-weight: 900;
+}
+
+.ue-cart-total {
+    justify-content: space-between;
+    margin: 1rem 0;
+    font-size: 1.05rem;
+}
+
+.ue-empty-state {
+    border-radius: 1.8rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+}
+
+.cart-empty,
+.cart-summary,
+.cart-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.cart-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.cart-empty.small {
+    padding: 1rem 0;
+}
+
+.cart-row {
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #ece9df;
+}
+
+.cart-item-detail-input {
+    width: 100%;
+    margin-top: 0.55rem;
+    border: 1px solid #ded8cb;
+    border-radius: 0.75rem;
+    font: inherit;
+    padding: 0.6rem;
+}
+
+.floating-cart {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-width: 18rem;
+    border-radius: 999px;
+    padding: 1rem 1.2rem;
+    background: var(--restaurant-accent);
+    color: var(--restaurant-accent-contrast);
+    box-shadow: 0 18px 40px rgba(16, 16, 16, 0.28);
+    z-index: 130;
+}
+
+.skeleton-card {
+    min-height: 12rem;
+    border-radius: 1.6rem;
+    background: linear-gradient(90deg, #f2f2ee, #eceae4, #f2f2ee);
+    background-size: 220% 100%;
+    animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -20% 0;
+    }
+}
+
+@media (max-width: 1350px) {
+    .ue-feed-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1180px) {
+    .ue-topbar {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .ue-link-btn,
+    .ue-location-pill {
+        order: 2;
+    }
+
+    .ue-search-wrap {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+
+    .ue-market-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .ue-market-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 160;
+        width: min(19rem, 90vw);
+        border-radius: 0 1.8rem 1.8rem 0;
+        transform: translateX(-110%);
+        transition: transform 180ms ease;
+    }
+
+    .ue-market-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .ue-sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 150;
+        border: 0;
+        background: rgba(16, 16, 16, 0.25);
+    }
+
+    .ue-menu-layout {
+        display: block;
+    }
+
+    .ue-cart-aside {
+        display: none;
+    }
+}
+
+@media (max-width: 820px) {
+    .ue-topbar,
+    .ue-market-shell,
+    .ue-store-main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .ue-store-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .ue-category-strip,
+    .ue-sticky-category-bar {
+        padding-bottom: 0.25rem;
+    }
+
+    .ue-booking-grid,
+    .ue-store-booking-grid,
+    .ue-item-list {
+        grid-template-columns: 1fr;
+    }
+
+    .ue-tile-click {
+        grid-template-columns: 1fr;
+    }
+
+    .ue-restaurant-image {
+        max-width: none;
+    }
+
+    .ue-item-card {
+        grid-template-columns: 1fr 7.8rem;
+    }
+
+    .ue-review-line,
+    .ue-table-row,
+    .ue-checkout-strip {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .floating-cart {
+        display: flex;
+        left: 1rem;
+        right: 1rem;
+        min-width: 0;
+    }
 }

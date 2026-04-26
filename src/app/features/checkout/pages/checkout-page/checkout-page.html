@@ -1,43 +1,172 @@
-<div class="card mb-4">
-    <div class="flex justify-content-between align-items-center gap-2">
-        <div>
-            <h2 class="m-0">Checkout</h2>
-            <p class="mt-2 mb-0">Review your order and place it.</p>
-            <p class="mt-2 mb-0">Table:<strong>{{tableNumber|| 'N/A'}}</strong></p>
+@if (cartItems.length > 0) {
+    <div class="checkout-shell">
+        <section class="checkout-hero">
+            <div class="hero-copy">
+                <span class="eyebrow">Final step</span>
+                <h1>Review your {{ orderType === 'Takeaway' ? 'take away' : 'dine in' }} order before we send it to the restaurant.</h1>
+                <p>
+                    You're ordering from <strong>{{ restaurantSettings?.restaurantName || restaurantName || 'the restaurant' }}</strong> for
+                    <strong>{{ tableNumber || (orderType === 'Takeaway' ? 'Take Away' : 'Dine In') }}</strong>. Double-check your dishes,
+                    choose how you want to pay, and place the order when you're ready.
+                </p>
+
+                <div class="hero-highlights">
+                    <div class="highlight-pill">
+                        <i class="pi pi-shopping-bag"></i>
+                        <span>{{ cartItems.length }} dishes selected</span>
+                    </div>
+                    <div class="highlight-pill">
+                        <i class="pi pi-wallet"></i>
+                        <span>{{ currencySymbol }}{{ grandTotal.toFixed(2) }} total</span>
+                    </div>
+                    <div class="highlight-pill">
+                        <i class="pi pi-th-large"></i>
+                        <span>{{ tableNumber || (orderType === 'Takeaway' ? 'Take Away' : 'Dine In') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-card">
+                <div class="hero-card-header">
+                    <span class="mini-label">Service snapshot</span>
+                    <strong>Ready to place</strong>
+                </div>
+
+                <div class="hero-stat-list">
+                    <div class="hero-stat">
+                        <span>Items</span>
+                        <strong>{{ cartItems.length }}</strong>
+                    </div>
+                    <div class="hero-stat">
+                        <span>Payment</span>
+                        <strong>{{ selectedPaymentMode }}</strong>
+                    </div>
+                    <div class="hero-stat total">
+                        <span>Grand total</span>
+                        <strong>{{ currencySymbol }}{{ grandTotal.toFixed(2) }}</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="checkout-grid">
+            <section class="checkout-panel order-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="mini-label">Order summary</span>
+                        <h2>Your selected dishes</h2>
+                    </div>
+
+                    <button pButton type="button" label="Back to cart" severity="secondary" [outlined]="true" (click)="goBackToCart()"></button>
+                </div>
+
+                <div class="order-list">
+                    @for (cartItem of cartItems; track cartItem.menuItem.id) {
+                        <article class="order-row">
+                            <div class="order-copy">
+                                <h3>{{ cartItem.menuItem.name }}</h3>
+                                <p>{{ cartItem.quantity }} x {{ currencySymbol }}{{ cartItem.menuItem.price.toFixed(2) }}</p>
+                                @if (getCartItemInstructions(cartItem); as instructions) {
+                                    <p class="item-detail-preview">{{ instructions }}</p>
+                                }
+                            </div>
+
+                            <strong class="row-total">{{ currencySymbol }}{{ (cartItem.menuItem.price * cartItem.quantity).toFixed(2) }}</strong>
+                        </article>
+                    }
+                </div>
+            </section>
+
+            <aside class="checkout-panel payment-panel">
+                <div class="panel-header compact">
+                    <div>
+                        <span class="mini-label">Payment</span>
+                        <h2>Choose how guests will pay</h2>
+                    </div>
+                </div>
+
+                <div class="payment-select-wrap">
+                    @if (isPayAtCounterSelected) {
+                        <div class="counter-payment-lock">
+                            <div>
+                                <span class="mini-label">Selected</span>
+                                <strong>{{ selectedPaymentOption?.label }}</strong>
+                                <p>{{ getPaymentDescription(selectedPaymentOption!) }}</p>
+                            </div>
+                            <button pButton type="button" label="Change" severity="secondary" [outlined]="true" (click)="changePaymentMode()"></button>
+                        </div>
+                    } @else {
+                        <label for="paymentMode" class="field-label">Payment Mode</label>
+                        <p-select
+                            inputId="paymentMode"
+                            [options]="paymentOption"
+                            [(ngModel)]="selectedPaymentMode"
+                            optionValue="value"
+                            optionLabel="label"
+                            placeholder="Select Payment Mode"
+                            class="w-full"
+                        ></p-select>
+                    }
+                </div>
+
+                <div class="payment-preview">
+                    @for (option of visiblePaymentOptions; track option.value) {
+                        <button
+                            type="button"
+                            class="payment-option-card"
+                            [class.active]="selectedPaymentMode === option.value"
+                            (click)="selectPaymentMode(option.value)">
+                            <div>
+                                <strong>{{ option.label }}</strong>
+                                <p>{{ getPaymentDescription(option) }}</p>
+                            </div>
+
+                            @if (selectedPaymentMode === option.value) {
+                                <i class="pi pi-check-circle"></i>
+                            }
+                        </button>
+                    }
+                </div>
+
+                <div class="bill-card">
+                    <div class="bill-row">
+                        <span>Subtotal</span>
+                        <strong>{{ currencySymbol }}{{ total.toFixed(2) }}</strong>
+                    </div>
+                    <div class="bill-row">
+                        <span>{{ taxName }}</span>
+                        <strong>{{ currencySymbol }}{{ taxAmount.toFixed(2) }}</strong>
+                    </div>
+                    <div class="bill-row">
+                        <span>Service flow</span>
+                        <strong>{{ isPayAtCounterSelected ? 'Counter payment after order' : (orderType === 'Takeaway' ? 'Pickup counter dispatch' : 'Instant restaurant dispatch') }}</strong>
+                    </div>
+                    <div class="bill-row grand">
+                        <span>Total</span>
+                        <strong>{{ currencySymbol }}{{ grandTotal.toFixed(2) }}</strong>
+                    </div>
+                </div>
+
+                <button
+                    pButton
+                    type="button"
+                    label="Place Order"
+                    icon="pi pi-check"
+                    class="place-order-btn"
+                    (click)="placeOrder()"
+                    [loading]="loading"
+                    [disabled]="loading"
+                ></button>
+            </aside>
         </div>
-        <button pButton type="button" label="Back to cart" severity="secondary" (click)="goBackToCart()"></button>
     </div>
-    @if(cartItems.length>0){
-    <p-table [value]="cartItems">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>SubTotal</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-cartItem>
-            <tr>
-                <td>{{cartItem.menuItem.name}}</td>
-                <td>{{cartItem.menuItem.price}}</td>
-                <td>{{cartItem.quantity}}</td>
-                <td>{{(cartItem.menuItem.price*cartItem.quantity).toFixed(2)}}</td>
-            </tr>
-        </ng-template>
-    </p-table>
-    }
-    <div class="mt-4">
-        <label for="paymentMode" class="block mb-2 font-medium">Payment Mode</label>
-        <p-select inputId="paymentMode" [options]="paymentOption" [(ngModel)]="selectedPaymentMode" optionValue="value" optionLabel="label" placeholder="Select Payment Mode" class="w-full md:w-20rem"> </p-select>
+} @else {
+    <div class="checkout-empty">
+        <div class="empty-card">
+            <span class="eyebrow">Checkout</span>
+            <h2>Your cart is empty</h2>
+            <p>Add a few dishes from the menu before continuing to checkout.</p>
+            <button pButton type="button" label="Back to Cart" severity="secondary" (click)="goBackToCart()"></button>
+        </div>
     </div>
-    <div class="flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
-        <div class="text-xl font-semibold">Total:$<strong>{{total.toFixed(2)}}</strong></div>
-        <button pButton type="button" label="Place Order" icon="pi pi-check" (click)="placeOrder()" [disabled]="loading"></button>
-    </div>
-</div>
-@if(cartItems.length===0){
-<div class="card">
-    <p>Your cart is empty, Add items before checkout</p>
-</div>
 }

@@ -163,8 +163,23 @@ namespace RestaurantSaas.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CurrencySymbol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -174,7 +189,21 @@ namespace RestaurantSaas.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TaxName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("TaxRate")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
 
@@ -326,6 +355,11 @@ namespace RestaurantSaas.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int>("LowStockThreshold")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5);
+
                     b.Property<int>("MenuCategoryId")
                         .HasColumnType("int");
 
@@ -339,6 +373,11 @@ namespace RestaurantSaas.Infrastructure.Migrations
 
                     b.Property<int>("RestaurantId")
                         .HasColumnType("int");
+
+                    b.Property<int>("StockQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -611,7 +650,7 @@ namespace RestaurantSaas.Infrastructure.Migrations
             modelBuilder.Entity("RestaurantSaaS.Domain.Entities.ApplicationUser", b =>
                 {
                     b.HasOne("Restaurant", "Restaurant")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -709,6 +748,8 @@ namespace RestaurantSaas.Infrastructure.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Tables");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("RestaurantSaaS.Domain.Entities.MenuItem", b =>

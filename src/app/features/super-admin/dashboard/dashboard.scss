@@ -1,3 +1,115 @@
-.card{
-    width: 100%;
+:host {
+  display: block;
+}
+
+.super-dashboard {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 1.5rem;
+  padding: 1.75rem;
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+  color: #eff6ff;
+  box-shadow: 0 24px 60px rgba(37, 99, 235, 0.16);
+}
+
+.hero-card h1 {
+  margin: 0.8rem 0;
+  color: #fff;
+  max-width: 14ch;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.98;
+}
+
+.hero-card p {
+  margin: 0;
+  color: rgba(239, 246, 255, 0.82);
+  max-width: 56ch;
+}
+
+.eyebrow {
+  display: inline-flex;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.hero-metrics {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-metrics article {
+  padding: 1rem 1.1rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero-metrics strong {
+  display: block;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.hero-metrics span {
+  color: rgba(239, 246, 255, 0.78);
+}
+
+.metric-card,
+.chart-card {
+  height: 100%;
+}
+
+.metric-card small {
+  display: block;
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.metric-card h3 {
+  margin: 0.4rem 0;
+  font-size: 2rem;
+}
+
+.metric-card p,
+.panel-title p {
+  margin: 0;
+  color: var(--text-color-secondary);
+}
+
+.panel-title {
+  margin-bottom: 1rem;
+}
+
+.panel-title h3 {
+  margin: 0 0 0.25rem;
+}
+
+.chart-shell {
+  min-height: 300px;
+}
+
+.chart-shell-large {
+  min-height: 340px;
+}
+
+@media (max-width: 960px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card h1 {
+    max-width: none;
+  }
 }

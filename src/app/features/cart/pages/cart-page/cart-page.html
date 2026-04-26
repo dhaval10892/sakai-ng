@@ -3,9 +3,11 @@
         <div>
             <h2 class="m-0">Your Cart</h2>
             <p class="mt-2 mb-0">Review Your selected items before placing the order.</p>
-            <p class="mt-2 mb-0">Table:<strong>{{tableNumber || 'N/A'}}</strong></p>
+            <p class="mt-2 mb-0">Service:<strong>{{ orderType === 'Takeaway' ? 'Take Away' : 'Dine In' }}</strong></p>
+            <p class="mt-2 mb-0">Table:<strong>{{ tableNumber || (orderType === 'Takeaway' ? 'Not needed' : 'Optional') }}</strong></p>
+            <p class="mt-2 mb-0">Restaurant:<strong>{{ restaurantSettings?.restaurantName || restaurantName || 'N/A' }}</strong></p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
             <button pButton type="butoon" label="Back to menu" severity="secondary" (click)="goBackToMenu()"></button>
             <button pButton type="button" label="Clear Cart" severity="danger" (click)="clearCart()"></button>
         </div>
@@ -14,10 +16,11 @@
 @if(cartItems.length>0){
 
     <div class="card">
-        <p-table [value]="cartItems">
+        <p-table [value]="cartItems" responsiveLayout="stack" [breakpoint]="'768px'">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Item</th>
+                    <th>Details</th>
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Subtotal</th>
@@ -26,11 +29,20 @@
             </ng-template>
             <ng-template pTemplate="body" let-cartItem>
                 <tr>
-                    <td>{{cartItem.menuItem.name}}</td>
-                    <td>${{cartItem.menuItem.price.toFixed(2)}}</td>
-                    <td>{{cartItem.quantity}}</td>
-                    <td>${{  (cartItem.menuItem.price * cartItem.quantity).toFixed(2) }}</td>
-                    <td>
+                    <td data-label="Item">{{cartItem.menuItem.name}}</td>
+                    <td data-label="Details">
+                        <textarea
+                            class="item-detail-input"
+                            rows="3"
+                            maxlength="180"
+                            [ngModel]="cartItem.specialInstructions || ''"
+                            (ngModelChange)="updateSpecialInstructions(cartItem.menuItem.id, $event)"
+                            placeholder="Add details, e.g. no onion, less spicy"></textarea>
+                    </td>
+                    <td data-label="Price">{{ currencySymbol }}{{ cartItem.menuItem.price.toFixed(2) }}</td>
+                    <td data-label="Quantity">{{cartItem.quantity}}</td>
+                    <td data-label="Subtotal">{{ currencySymbol }}{{ (cartItem.menuItem.price * cartItem.quantity).toFixed(2) }}</td>
+                    <td data-label="Actions">
                         <div class="flex gap-2 flex-wrap">
                             <button 
                             pButton
@@ -54,11 +66,11 @@
         </p-table>
     </div>
 }
-<div class="flex justify-content-end mb-4 ">
+<div class="flex justify-content-end mb-4 flex-wrap gap-3">
     <div class="text-xl font-semibold">
-        Total :$ {{total.toFixed(2)}}
+        Total : {{ currencySymbol }}{{ total.toFixed(2) }}
     </div>
-    <div class="flex justify-content-end ml-20">
+    <div class="flex justify-content-end">
         <button
         pButton
         type="button"

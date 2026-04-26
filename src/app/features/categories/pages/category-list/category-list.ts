@@ -7,9 +7,11 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChangeDetectorRef } from '@angular/core';
+import { finalize } from 'rxjs';
 
 import { MenuCategory } from '../../../../core/models/menu-category.model';
 import { MenuCategoryService } from '../../../../core/services/menu-category.service';
+import { NotificationService } from '@/app/core/services/notification.service';
 
 @Component({
   selector: 'app-category-list',
@@ -33,7 +35,11 @@ export class CategoryList implements OnInit {
 
   currentCategory: MenuCategory = this.getEmptyCategory();
 
-  constructor(private menuCategoryService: MenuCategoryService, private rdf:ChangeDetectorRef) {}
+  constructor(
+    private menuCategoryService: MenuCategoryService,
+    private rdf:ChangeDetectorRef,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadCategories();
@@ -42,18 +48,22 @@ export class CategoryList implements OnInit {
   loadCategories(): void {
     this.loading = true;
 
-    this.menuCategoryService.getCategories().subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        this.loading = false;
-        this.rdf.detectChanges();
-      },
-      error: (error) => {
-        console.error('Failed to load categories', error);
-        this.loading = false;
-        alert('Failed to load categories from API.');
-      }
-    });
+    this.menuCategoryService.getCategories(true)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.rdf.markForCheck();
+        })
+      )
+      .subscribe({
+        next: (categories) => {
+          this.categories = categories;
+        },
+        error: (error) => {
+          console.error('Failed to load categories', error);
+          this.notificationService.showApiError(error, 'Failed to load categories from API.');
+        }
+      });
   }
 
   getEmptyCategory(): MenuCategory {
@@ -79,7 +89,7 @@ export class CategoryList implements OnInit {
     this.currentCategory.name = this.currentCategory.name.trim();
 
     if (!this.currentCategory.name) {
-      alert('Category name is required.');
+      this.notificationService.warn('Invalid category', 'Category name is required.');
       return;
     }
 
@@ -90,32 +100,38 @@ export class CategoryList implements OnInit {
     );
 
     if (duplicateCategory) {
-      alert('Category name already exists.');
+      this.notificationService.warn('Duplicate category', 'Category name already exists.');
       return;
     }
 
     if (this.isEditMode) {
       this.menuCategoryService.update(this.currentCategory.id,this.currentCategory).subscribe({
         next: () => {
-          this.loadCategories();
+          this.categories = this.categories
+            .map((category) => (category.id === this.currentCategory.id ? { ...this.currentCategory } : category))
+            .sort((left, right) => left.name.localeCompare(right.name));
           this.dialogVisible = false;
           this.currentCategory = this.getEmptyCategory();
+          this.notificationService.success('Category updated', 'Category updated successfully.');
+          this.rdf.markForCheck();
         },
         error: (error) => {
           console.error('Failed to update category', error);
-          alert('Failed to update category.');
+          this.notificationService.showApiError(error, 'Failed to update category.');
         }
       });
     } else {
       this.menuCategoryService.createCategory(this.currentCategory).subscribe({
-        next: () => {
-          this.loadCategories();
+        next: (createdCategory) => {
+          this.categories = [...this.categories, createdCategory].sort((left, right) => left.name.localeCompare(right.name));
           this.dialogVisible = false;
           this.currentCategory = this.getEmptyCategory();
+          this.notificationService.success('Category created', 'Category created successfully.');
+          this.rdf.markForCheck();
         },
         error: (error) => {
           console.error('Failed to add category', error);
-          alert('Failed to add category.');
+          this.notificationService.showApiError(error, 'Failed to add category.');
         }
       });
     }
@@ -127,11 +143,13 @@ export class CategoryList implements OnInit {
 
     this.menuCategoryService.delete(id).subscribe({
       next: () => {
-        this.loadCategories();
+        this.categories = this.categories.filter((category) => category.id !== id);
+        this.notificationService.success('Category deleted', 'Category deleted successfully.');
+        this.rdf.markForCheck();
       },
       error: (error) => {
         console.error('Failed to delete category', error);
-        alert('Failed to delete category. It may be used by existing menu items.');
+        this.notificationService.showApiError(error, 'Failed to delete category. It may be used by existing menu items.');
       }
     });
   }

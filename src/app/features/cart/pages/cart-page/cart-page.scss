@@ -1,3 +1,22 @@
 :host {
   display: block;
 }
+
+.item-detail-input {
+  width: min(100%, 20rem);
+  min-height: 4.25rem;
+  resize: vertical;
+  border: 1px solid rgba(217, 207, 191, 0.9);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text-color);
+  font: inherit;
+  line-height: 1.45;
+  padding: 0.7rem 0.8rem;
+}
+
+.item-detail-input:focus {
+  outline: 0;
+  border-color: var(--restaurant-accent, #ff6f61);
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.12);
+}

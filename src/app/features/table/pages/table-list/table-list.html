@@ -1,28 +1,44 @@
 <div class="card">
-  <div class="flex justify-content-between align-items-center mb-3">
+  <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h2 class="m-0">Tables Management</h2>
-    <button pButton type="button" label="Add Table" icon="pi pi-plus" (click)="openAddDialog()"></button>
+    <div class="flex gap-2 flex-wrap">
+      <button pButton type="button" label="Refresh" icon="pi pi-refresh" severity="secondary" (click)="startAutoRefresh()"></button>
+      <button pButton type="button" label="Add Table" icon="pi pi-plus" (click)="openAddDialog()"></button>
+    </div>
   </div>
-  <p-table [value]="tables">
+  <p-table [value]="tables" responsiveLayout="stack" [breakpoint]="'768px'">
     <ng-template pTemplate="header">
         <tr>
           <th>ID</th>
           <th>Table Number</th>
           <th>Seats</th>
           <th>Status</th>
+          <th>QR Ordering</th>
+          <th>Actions</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-table>
       <tr>
-        <td>{{table.id}}</td>
-        <td>{{table.number}}</td>
-        <td>{{table.seats}}</td>
-        <td>
+        <td data-label="ID">{{table.id}}</td>
+        <td data-label="Table Number">{{table.number}}</td>
+        <td data-label="Seats">{{table.seats}}</td>
+        <td data-label="Status">
           <p-tag [value]="table.status" [severity]="getSeverity(table.status)">
           </p-tag>
         </td>
-        <td>
-          <div class="flex gap-2">
+        <td data-label="QR Ordering">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-qrcode"
+            label="View QR"
+            severity="contrast"
+            [outlined]="true"
+            (click)="openQrDialog(table)">
+          </button>
+        </td>
+        <td data-label="Actions">
+          <div class="flex gap-2 flex-wrap">
 
             <button 
             pButton 
@@ -54,12 +70,60 @@
   </p-table>
 </div>
 
+<div class="card mt-4">
+  <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+      <h2 class="m-0">Booking Requests</h2>
+      <small class="text-600">Auto-refreshes every 5 seconds and shows an admin toast when a new booking arrives.</small>
+    </div>
+    <p-tag [value]="bookingRequests.length + ' active'" severity="info"></p-tag>
+  </div>
+
+  <p-table [value]="bookingRequests" responsiveLayout="stack" [breakpoint]="'768px'">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Guest</th>
+        <th>Phone</th>
+        <th>Table</th>
+        <th>Schedule</th>
+        <th>Seats</th>
+        <th>Occasion</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-booking>
+      <tr>
+        <td data-label="Guest">{{ booking.guestName }}</td>
+        <td data-label="Phone">{{ booking.phone }}</td>
+        <td data-label="Table">{{ booking.tableNumber }}</td>
+        <td data-label="Schedule">{{ booking.bookingDate }} {{ booking.bookingTime }}</td>
+        <td data-label="Seats">{{ booking.seats }}</td>
+        <td data-label="Occasion">{{ booking.occasion || '-' }}</td>
+        <td data-label="Status">
+          <p-tag [value]="booking.status" [severity]="getSeverity(booking.status === 'Pending' ? 'Reserved' : booking.status === 'Confirmed' ? 'Available' : 'Occupied')"></p-tag>
+        </td>
+        <td data-label="Actions">
+          <div class="flex gap-2 flex-wrap">
+            <button pButton type="button" label="Confirm" severity="success" [disabled]="booking.status !== 'Pending'" (click)="confirmBooking(booking)"></button>
+            <button pButton type="button" label="Reject" severity="danger" [outlined]="true" [disabled]="booking.status !== 'Pending'" (click)="rejectBooking(booking)"></button>
+          </div>
+          @if (booking.arrangement) {
+            <small class="block mt-2 text-600">{{ booking.arrangement }}</small>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
 <p-dialog 
 [header]="isEditMode ? 'Edit Table': 'Add New Table'"
 [modal]="true"
 [contentStyle]="{ overflow: 'visible' }"
 [(visible)]="isVisible"
-[style]="{width:'30rem'}">
+[style]="{width:'30rem', maxWidth: '96vw'}"
+[breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
 
 <div class="filed mb-3">
   <label for="number" class="block mb-2 font-medium">Table Number</label>
@@ -75,7 +139,7 @@
   <p-select inputId="status"    [options]="statusOptions" [(ngModel)]="currentTable.status" optionLabel="label" optionValue="value" placeholder="Select Status" class="w-full">
   </p-select>
 </div>
-<div class="flex justify-content-end gap-2" >
+<div class="flex justify-content-end gap-2 flex-wrap" >
   <button 
   pButton
   label="Cancel"
@@ -89,4 +153,20 @@ pButton
 (click)="saveTable()">
 </button>
 </div>
+</p-dialog>
+
+<p-dialog
+  header="Table QR Ordering"
+  [modal]="true"
+  [(visible)]="qrDialogVisible"
+  [style]="{ width: '26rem', maxWidth: '96vw' }"
+  [breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
+  @if (selectedQrTable) {
+    <div class="flex flex-column align-items-center gap-3 text-center">
+      <h3 class="m-0">Table {{ selectedQrTable.number }}</h3>
+      <img [src]="getQrImageUrl(selectedQrTable)" [alt]="'QR code for ' + selectedQrTable.number" width="220" height="220" />
+      <p class="m-0 text-600">Scan to open the online ordering menu for this table.</p>
+      <input pInputText class="w-full" [value]="getOrderUrl(selectedQrTable)" readonly />
+    </div>
+  }
 </p-dialog>

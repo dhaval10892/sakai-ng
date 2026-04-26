@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="flex justify-content-between align-items-center mb-3">
+  <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h2 class="m-0">Category Management</h2>
     <button
       pButton
@@ -10,7 +10,7 @@
     </button>
   </div>
 
-  <p-table [value]="categories" [loading]="loading" responsiveLayout="scroll">
+  <p-table [value]="categories" [loading]="loading" responsiveLayout="stack" [breakpoint]="'768px'">
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
@@ -21,10 +21,10 @@
 
     <ng-template pTemplate="body" let-category>
       <tr>
-        <td>{{ category.id }}</td>
-        <td>{{ category.name }}</td>
-        <td>
-          <div class="flex gap-2">
+        <td data-label="ID">{{ category.id }}</td>
+        <td data-label="Category Name">{{ category.name }}</td>
+        <td data-label="Actions">
+          <div class="flex gap-2 flex-wrap">
             <button
               pButton
               type="button"
@@ -51,7 +51,8 @@
   [header]="isEditMode ? 'Edit Category' : 'Add Category'"
   [(visible)]="dialogVisible"
   [modal]="true"
-  [style]="{ width: '28rem' }">
+  [style]="{ width: '28rem', maxWidth: '96vw' }"
+  [breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
 
   <div class="field mb-4">
     <label for="name" class="block mb-2 font-medium">Category Name</label>
@@ -63,7 +64,7 @@
       class="w-full" />
   </div>
 
-  <div class="flex justify-content-end gap-2">
+  <div class="flex justify-content-end gap-2 flex-wrap">
     <button
       pButton
       type="button"

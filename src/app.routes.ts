@@ -16,6 +16,23 @@ export const routes: Routes = [
         loadComponent: () => import('./app/features/public-menu/pages/public-menu/public-menu').then((m) => m.PublicMenu)
     },
     {
+        path: 'public-menu/:tableNumber',
+        loadComponent: () => import('./app/features/public-menu/pages/public-menu/public-menu').then((m) => m.PublicMenu)
+    },
+    {
+        path: 'restaurants',
+        loadComponent: () => import('./app/features/public-menu/pages/public-menu/public-menu').then((m) => m.PublicMenu)
+    },
+    {
+        path: 'restaurants/:restaurantId',
+        loadComponent: () => import('./app/features/public-menu/pages/public-menu/public-menu').then((m) => m.PublicMenu)
+    },
+    {
+        path: 'public-menu',
+        redirectTo: 'restaurants',
+        pathMatch: 'full'
+    },
+    {
         path: 'cart',
         loadComponent: () => import('./app/features/cart/pages/cart-page/cart-page').then((m) => m.CartPage)
     },

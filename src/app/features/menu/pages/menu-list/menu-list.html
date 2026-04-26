@@ -1,33 +1,43 @@
 <div class="card">
-    <div class="flex justify-content-between align-items-center mb-3">
+    <div class="flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <h2 class="m-0">Menu Management</h2>
         <button pButton type="button" label="Add Item" icon="pi pi-plus" (click)="openAddDialog()"></button>
     </div>
-    <p-table [value]="(menuItems | async) ?? []">
+    <p-table [value]="menuItems" responsiveLayout="stack" [breakpoint]="'768px'">
         <ng-template pTemplate="header">
             <tr>
                 <th>ID</th>
                 <th>Item Name</th>
                 <th>Category</th>
                 <th>Price</th>
+                <th>Stock</th>
                 <th>Availability</th>
                 <th>Image</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
             <tr>
-                <td>{{item.id}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.categoryName}}</td>
-                <td>${{item.price.toFixed(2)}}</td>
-                <td>
-                    <p-tag [value]="item.available ? 'Available': 'Out of stock'" [severity]="item.available ? 'success':'danger'"> </p-tag>
+                <td data-label="ID">{{item.id}}</td>
+                <td data-label="Item Name">{{item.name}}</td>
+                <td data-label="Category">{{item.categoryName}}</td>
+                <td data-label="Price">{{ currencySymbol }}{{ item.price.toFixed(2) }}</td>
+                <td data-label="Stock">
+                    <div class="flex flex-column gap-1">
+                        <strong>{{ getItemStockQuantity(item) }}</strong>
+                        <small class="text-500">Low at {{ getItemLowStockThreshold(item) }}</small>
+                    </div>
                 </td>
-                <td>
-                    <img *ngIf="item.imageUrl" [src]=getImageUrl(item.imageUrl) [alt]="item.name" style="width: 60px; height: 60px; object-fit: cover" class="border-round" />
+                <td data-label="Availability">
+                    <p-tag
+                        [value]="getItemStockQuantity(item) <= 0 ? 'Out of stock' : (getItemStockQuantity(item) <= getItemLowStockThreshold(item) ? 'Low stock' : (item.available ? 'Available' : 'Unavailable'))"
+                        [severity]="getItemStockQuantity(item) <= 0 ? 'danger' : (getItemStockQuantity(item) <= getItemLowStockThreshold(item) ? 'warn' : (item.available ? 'success' : 'secondary'))">
+                    </p-tag>
                 </td>
-                <td>
-                    <div class="flex gap-2">
+                <td data-label="Image">
+                    <img *ngIf="item.imageUrl" [src]="getImageUrl(item.imageUrl)" [alt]="item.name" style="width: 60px; height: 60px; object-fit: cover" class="border-round" />
+                </td>
+                <td data-label="Actions">
+                    <div class="flex gap-2 flex-wrap">
                         <button pButton type="button" icon="pi pi-pencil" severity="info" (click)="openEditDialog(item)"></button>
                         <button pButton type="button" icon="pi pi-trash" severity="danger" (click)="deleteItem(item.id)"></button>
                     </div>
@@ -37,7 +47,7 @@
     </p-table>
 </div>
 
-<p-dialog [header]="isEditMode ? 'Edit Menu Item' :'Add Menu Item'" [(visible)]="dialogVisible" [modal]="true" [style]="{width:'25rem'}">
+<p-dialog [header]="isEditMode ? 'Edit Menu Item' :'Add Menu Item'" [(visible)]="dialogVisible" [modal]="true" [style]="{width:'25rem', maxWidth: '96vw'}" [breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
     <div class="field mb-3">
         <label for="name" class="block mb-2 font medium">Item Name </label>
         <input id="name" type="text" pInputText [(ngModel)]="currentItem.name" class="w-full" />
@@ -50,6 +60,14 @@
         <label for="price" class="block mb-2 font medium">Price</label>
         <p-inputNumber inputId="price" [(ngModel)]="currentItem.price" mode="decimal" [min]="0" class="w-full"> </p-inputNumber>
     </div>
+    <div class="filed mb-3">
+        <label for="stockQuantity" class="block mb-2 font medium">Stock Quantity</label>
+        <p-inputNumber inputId="stockQuantity" [ngModel]="getCurrentStockQuantity()" (ngModelChange)="setCurrentStockQuantity($event)" [min]="0" class="w-full"> </p-inputNumber>
+    </div>
+    <div class="filed mb-3">
+        <label for="lowStockThreshold" class="block mb-2 font medium">Low Stock Alert</label>
+        <p-inputNumber inputId="lowStockThreshold" [ngModel]="getCurrentLowStockThreshold()" (ngModelChange)="setCurrentLowStockThreshold($event)" [min]="0" class="w-full"> </p-inputNumber>
+    </div>
     <div class="field mb-3">
         <label for="available" class="block ml-2">Available</label>
         <p-checkBox inputId="available" binary="true" [(ngModel)]="currentItem.available" class="w-full"> </p-checkBox>
@@ -60,9 +78,9 @@
     </div>
 
     <div *ngIf="currentItem.imageUrl" class="mb-3">
-        <img [src]="currentItem.imageUrl" alt="Preview" class="border-round" style="width: 120px; height: 120px; object-fit: cover" />
+        <img [src]="getImageUrl(currentItem.imageUrl)" alt="Preview" class="border-round" style="width: 120px; height: 120px; object-fit: cover" />
     </div>
-    <div class="justify-content-end gap-2">
+    <div class="justify-content-end gap-2 flex flex-wrap">
         <button pButton type="button" label="Cancel" severity="secondary" (click)="dialogVisible=false"></button>
         <button pButton type="button" [label]="uploading ? 'Uploading...' : (isEditMode ? 'Update' : 'Save')" [disabled]="uploading" (click)="saveItem()"></button>
     </div>

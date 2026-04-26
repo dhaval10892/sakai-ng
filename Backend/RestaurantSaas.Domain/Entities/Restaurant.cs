@@ -13,6 +13,18 @@ public class Restaurant
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public string Country { get; set; } = "India";
+
+    public string State { get; set; } = string.Empty;
+
+    public string CurrencyCode { get; set; } = "INR";
+
+    public string CurrencySymbol { get; set; } = "\u20B9";
+
+    public string TaxName { get; set; } = "GST";
+
+    public decimal TaxRate { get; set; } = 0.18m;
+
     
     
 

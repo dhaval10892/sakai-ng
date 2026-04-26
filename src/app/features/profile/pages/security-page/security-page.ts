@@ -7,6 +7,7 @@ import { CardModule } from 'primeng/card';
 import { PasswordModule } from 'primeng/password';
 
 import { UserManagementService } from '../../../../core/services/user-management.service';
+import { NotificationService } from '@/app/core/services/notification.service';
 
 @Component({
   selector: 'app-security-page',
@@ -21,16 +22,19 @@ export class SecurityPage {
   confirmPassword = '';
   loading = false;
 
-  constructor(private userManagementService: UserManagementService) {}
+  constructor(
+    private userManagementService: UserManagementService,
+    private notificationService: NotificationService
+  ) {}
 
   changePassword(): void {
     if (!this.currentPassword.trim() || !this.newPassword.trim()) {
-      alert('Please fill all required fields.');
+      this.notificationService.warn('Missing fields', 'Please fill all required fields.');
       return;
     }
 
     if (this.newPassword !== this.confirmPassword) {
-      alert('New password and confirm password do not match.');
+      this.notificationService.warn('Password mismatch', 'New password and confirm password do not match.');
       return;
     }
 
@@ -45,12 +49,12 @@ export class SecurityPage {
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
-        alert('Password changed successfully.');
+        this.notificationService.success('Password updated', 'Your password was changed successfully.');
       },
       error: (error) => {
         console.error('Failed to change password', error);
         this.loading = false;
-        alert(error?.error || 'Failed to change password.');
+        this.notificationService.showApiError(error, 'Failed to change password.');
       }
     });
   }

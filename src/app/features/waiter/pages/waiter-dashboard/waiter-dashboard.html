@@ -1,13 +1,13 @@
 <div class="waiter-dashboard p-4">
     <div class="mb-4">
         <p-card class="dashboard-header-card">
-            <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3">
+            <div class="waiter-header flex flex-column md:flex-row md:align-items-center md:justify-content-between gap-3">
                 <div>
                     <h2 class="m-0 mb-2">Waiter Dashboard</h2>
                     <p class="m-0 text-600">Manage ready-to-serve orders here.</p>
                 </div>
 
-                <button pButton type="button" label="Go to Order" icon="pi pi-arrow-right" (click)="goToOrder()"></button>
+             
             </div>
         </p-card>
     </div>
@@ -18,8 +18,8 @@
             <p-card class="summary-card ready-card h-full">
                 <div class="flex justify-content-between align-items-center">
                     <div>
-                        <h3 class="m-0 mb-2">Ready Orders</h3>
-                        <p class="text-3xl font-semibold m-0">{{ readyOrderCount }}</p>
+                        <h3 class="m-0 mb-2">Active Orders</h3>
+                        <p class="text-3xl font-semibold m-0">{{ activeWaiterOrderCount }}</p>
                     </div>
                     <i class="pi pi-check-circle text-3xl"></i>
                 </div>
@@ -30,10 +30,10 @@
             <p-card class="summary-card served-card h-full">
                 <div class="flex justify-content-between align-items-center">
                     <div>
-                        <h3 class="m-0 mb-2">Served Orders</h3>
-                        <p class="text-3xl font-semibold m-0">{{ servedOrderCount }}</p>
+                        <h3 class="m-0 mb-2">On The Way</h3>
+                        <p class="text-3xl font-semibold m-0">{{ onTheWayOrderCount }}</p>
                     </div>
-                    <i class="pi pi-send text-3xl"></i>
+                    <i class="pi pi-car text-3xl"></i>
                 </div>
             </p-card>
         </div>
@@ -42,10 +42,10 @@
             <p-card class="summary-card occupied-card h-full">
                 <div class="flex justify-content-between align-items-center">
                     <div>
-                        <h3 class="m-0 mb-2">Occupied Tables</h3>
-                        <p class="text-3xl font-semibold m-0">{{ occupiedTableCount }}</p>
+                        <h3 class="m-0 mb-2">Served Orders</h3>
+                        <p class="text-3xl font-semibold m-0">{{ servedOrderCount }}</p>
                     </div>
-                    <i class="pi pi-th-large text-3xl"></i>
+                    <i class="pi pi-send text-3xl"></i>
                 </div>
             </p-card>
         </div>
@@ -72,23 +72,24 @@
                             <div class="mb-3"><strong>Total:</strong> ${{ order.total.toFixed(2) }}</div>
                         </div>
 
-                        <div class="flex flex-wrap gap-2">
-                            <button
-                                pButton
-                                type="button"
-                                label="Mark Served"
-                                severity="info"
-                                (click)="markServed(order)">
-                            </button>
-
-                            <button
-                                pButton
-                                type="button"
-                                label="Keep Ready"
-                                severity="success"
-                                [outlined]="true"
-                                (click)="markReady(order)">
-                            </button>
+                        <div class="order-actions flex flex-wrap gap-2">
+                            @if (order.status === 'On the Way') {
+                                <button
+                                    pButton
+                                    type="button"
+                                    label="Mark Served"
+                                    severity="info"
+                                    (click)="markServed(order)">
+                                </button>
+                            } @else {
+                                <button
+                                    pButton
+                                    type="button"
+                                    label="On The Way"
+                                    severity="success"
+                                    (click)="markOnTheWay(order)">
+                                </button>
+                            }
                         </div>
                     </p-card>
                 </div>

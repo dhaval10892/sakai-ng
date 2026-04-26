@@ -9,7 +9,7 @@
     <div class="col-12 md:col-6 xl:col-3">
         <div class="card">
             <h3>Total Revenue</h3>
-            <p class="text-3xl font-semibold">${{ totalRevenue.toFixed(2) }}</p>
+            <p class="text-3xl font-semibold">{{ currencySymbol }}{{ totalRevenue.toFixed(2) }}</p>
         </div>
     </div>
 
@@ -23,20 +23,49 @@
     <div class="col-12 md:col-6 xl:col-3">
         <div class="card">
             <h3>Cash Revenue</h3>
-            <p class="text-3xl font-semibold">${{ cashRevenue.toFixed(2) }}</p>
+            <p class="text-3xl font-semibold">{{ currencySymbol }}{{ cashRevenue.toFixed(2) }}</p>
         </div>
     </div>
 
     <div class="col-12 md:col-6 xl:col-3">
         <div class="card">
             <h3>Card Revenue</h3>
-            <p class="text-3xl font-semibold">${{ cardRevenue.toFixed(2) }}</p>
+            <p class="text-3xl font-semibold">{{ currencySymbol }}{{ cardRevenue.toFixed(2) }}</p>
         </div>
     </div>
     <div class="col-12 md:col-6 xl:col-3">
         <div class="card">
             <h3>QR Revenue</h3>
-            <p class="text-3xl font-semibold">${{ qrRevenue.toFixed(2) }}</p>
+            <p class="text-3xl font-semibold">{{ currencySymbol }}{{ qrRevenue.toFixed(2) }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12 lg:col-8">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="m-0">Revenue Trend</h3>
+                    <small class="text-500">Last paid revenue activity</small>
+                </div>
+            </div>
+            <div class="reports-chart reports-chart-large">
+                <p-chart type="line" [data]="revenueTrendChartData" [options]="revenueTrendChartOptions"></p-chart>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-4">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="m-0">Revenue Split</h3>
+                    <small class="text-500">By payment method</small>
+                </div>
+            </div>
+            <div class="reports-chart">
+                <p-chart type="doughnut" [data]="revenueSplitChartData" [options]="revenueSplitChartOptions"></p-chart>
+            </div>
         </div>
     </div>
 </div>
@@ -59,6 +88,8 @@
                 #paymentsTable
                 [value]="filteredPayments"
                 [loading]="loading"
+                responsiveLayout="stack"
+                [breakpoint]="'768px'"
                 [paginator]="true"
                 [rows]="pageSize"
                 [totalRecords]="totalRecords"
@@ -83,16 +114,16 @@
 
                 <ng-template pTemplate="body" let-payment>
                     <tr>
-                        <td>#{{ payment.id }}</td>
-                        <td>#{{ payment.orderId }}</td>
-                        <td>{{ payment.table }}</td>
-                        <td>${{ payment.amount.toFixed(2) }}</td>
-                        <td>{{ payment.paymentMethod }}</td>
-                        <td>
+                        <td data-label="Payment ID">#{{ payment.id }}</td>
+                        <td data-label="Order ID">#{{ payment.orderId }}</td>
+                        <td data-label="Table">{{ payment.table }}</td>
+                        <td data-label="Amount">{{ currencySymbol }}{{ payment.amount.toFixed(2) }}</td>
+                        <td data-label="Method">{{ payment.paymentMethod }}</td>
+                        <td data-label="Status">
                             <p-tag [value]="payment.paymentStatus" [severity]="getSeverity(payment.paymentStatus)"></p-tag>
                         </td>
-                        <td>{{ payment.createdAt | date:'short' }}</td>
-                        <td>{{ payment.paidAt ? (payment.paidAt | date:'short') : '-' }}</td>
+                        <td data-label="Created">{{ payment.createdAt | date:'short' }}</td>
+                        <td data-label="Paid At">{{ payment.paidAt ? (payment.paidAt | date:'short') : '-' }}</td>
                     </tr>
                 </ng-template>
             </p-table>

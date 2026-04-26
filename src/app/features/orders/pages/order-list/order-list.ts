@@ -11,6 +11,8 @@ import { SelectModule } from 'primeng/select';
 import { ChangeDetectorRef } from '@angular/core';
 import { Order } from '../../../../core/models/order.model';
 import { OrdersService } from '../../../../core/services/orders.service';
+import { AdminHeaderService } from '@/app/core/services/adminheader.service';
+import { resolveCurrencySymbol } from '@/app/core/utils/tenant-localization';
 
 @Component({
   selector: 'app-order-list',
@@ -37,6 +39,7 @@ export class OrderList implements OnInit {
 
   selectedStatusFilter = 'All';
   loading = false;
+  currencySymbol = '\u20B9';
 
   statusOptions = [
     { label: 'Preparing', value: 'Preparing' },
@@ -53,10 +56,27 @@ export class OrderList implements OnInit {
 
   currentOrder: Order = this.getEmptyOrder();
 
-  constructor(private ordersService: OrdersService,private rdf:ChangeDetectorRef) {}
+  constructor(
+    private ordersService: OrdersService,
+    private rdf:ChangeDetectorRef,
+    private adminHeaderService: AdminHeaderService
+  ) {}
 
   ngOnInit(): void {
+    this.loadRestaurantLocalization();
     this.loadOrders();
+  }
+
+  loadRestaurantLocalization(): void {
+    this.adminHeaderService.getRestaurant().subscribe({
+      next: (restaurant) => {
+        this.currencySymbol = resolveCurrencySymbol(restaurant?.currencySymbol, restaurant?.country, restaurant?.currencyCode);
+        this.rdf.markForCheck();
+      },
+      error: (error) => {
+        console.error('Failed to load order localization', error);
+      }
+    });
   }
 
   loadOrders(): void {
@@ -67,7 +87,7 @@ export class OrderList implements OnInit {
         this.orders = orders;
         this.applyFilter();
         this.loading = false;
-        this.rdf.detectChanges();
+        this.rdf.markForCheck();
       },
       error: (error) => {
         console.error('Failed to load orders', error);

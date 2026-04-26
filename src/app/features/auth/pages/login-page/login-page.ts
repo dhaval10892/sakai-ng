@@ -9,6 +9,7 @@ import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '@/app/core/services/notification.service';
 
 @Component({
     selector: 'app-login-page',
@@ -25,6 +26,7 @@ export class LoginPage {
 
     private authService = inject(AuthService);
     private router = inject(Router);
+    private notificationService = inject(NotificationService);
 
     login(): void {
         this.errorMessage = '';
@@ -62,6 +64,7 @@ export class LoginPage {
                 error: (error) => {
                     console.error('Login failed', error);
                     this.errorMessage = error?.error || 'Invalid username or password.';
+                    this.notificationService.error('Login failed', this.errorMessage);
                     this.loading = false;
                 },
                 complete: () => {

@@ -1,0 +1,37 @@
+.waiter-dashboard {
+  padding-inline: clamp(0.85rem, 2vw, 1.5rem) !important;
+}
+
+.waiter-header,
+.order-card,
+.summary-card {
+  height: 100%;
+}
+
+.order-details {
+  word-break: break-word;
+}
+
+.order-actions {
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .waiter-dashboard {
+    padding: 1rem 0.75rem 1.5rem !important;
+  }
+
+  :host ::ng-deep .summary-card .p-card-body,
+  :host ::ng-deep .order-card .p-card-body,
+  :host ::ng-deep .dashboard-header-card .p-card-body {
+    padding: 1rem;
+  }
+
+  :host ::ng-deep .summary-card .text-3xl {
+    font-size: 2rem !important;
+  }
+
+  .order-actions button {
+    width: 100%;
+  }
+}

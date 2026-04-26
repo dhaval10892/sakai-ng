@@ -17,7 +17,7 @@ public class ActivityLogService : IActivityLogService
         _currentUserService = currentUserService;
     }
 
-    public async Task LogAsync(string action, string entityName, string entityId, string? details = null)
+    public async Task LogAsync(string action, string entityName, string entityId, string? details = null, int? restaurantId = null)
     {
         var log = new ActivityLog
         {
@@ -26,7 +26,8 @@ public class ActivityLogService : IActivityLogService
             EntityId = entityId,
             PerformedBy = _currentUserService.Username ?? "system",
             PerformedAt = DateTime.UtcNow,
-            Details = details
+            Details = details,
+            RestaurantId = restaurantId ?? 0
         };
 
         _context.ActivityLogs.Add(log);

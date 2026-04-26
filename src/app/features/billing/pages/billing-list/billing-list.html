@@ -1,76 +1,337 @@
-<div class="card">
-    <div class="flex justify-content-between align-items-center mb-3">
-        <h2 class="m-0">Billing</h2>
+<div class="billing-page">
+    <div class="billing-header">
+        <div>
+            <h2 class="m-0">Billing</h2>
+            <p class="m-0">Settle served and takeaway orders with split payments, cards, cash, and tips.</p>
+        </div>
+
         <button pButton type="button" label="Refresh" icon="pi pi-refresh" (click)="loadBillingData()"></button>
     </div>
 
-    <p-table [value]="servedOrders" [loading]="loading">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Order ID</th>
-                <th>Table</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </ng-template>
+    <div class="grid mt-4">
+        <div class="col-12 md:col-6 xl:col-3">
+            <div class="billing-stat">
+                <small>Pending Bills</small>
+                <strong>{{ pendingOrdersCount }}</strong>
+                <span>Orders waiting for payment</span>
+            </div>
+        </div>
 
-        <ng-template pTemplate="body" let-order>
-            <tr>
-                <td>#{{ order.id }}</td>
-                <td>{{ order.table }}</td>
-                <td>{{ order.itemsText }}</td>
-                <td>${{ order.total.toFixed(2) }}</td>
-                <td>
-                    <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
-                </td>
-                <td>
-                    <button pButton type="button" label="Mark Paid" icon="pi pi-check" severity="success" (click)="openPaymentDialog(order)"></button>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+        <div class="col-12 md:col-6 xl:col-3">
+            <div class="billing-stat">
+                <small>Pending Amount</small>
+                <strong>{{ currencySymbol }}{{ pendingRevenue.toFixed(2) }}</strong>
+                <span>Total receivable in billing queue</span>
+            </div>
+        </div>
 
-    @if(servedOrders.length === 0 && !loading){
+        <div class="col-12 md:col-6 xl:col-3">
+            <div class="billing-stat billing-stat--success">
+                <small>Today Tips</small>
+                <strong>{{ currencySymbol }}{{ todayTipAmount.toFixed(2) }}</strong>
+                <span>Tip amount paid today</span>
+            </div>
+        </div>
 
-    <div class="mt-3">
-        <p>No served unpaid orders found.</p>
+        <div class="col-12 md:col-6 xl:col-3">
+            <div class="billing-stat billing-stat--accent">
+                <small>Split Payments</small>
+                <strong>{{ splitPaymentsCount }}</strong>
+                <span>Cash and card combined payments</span>
+            </div>
+        </div>
     </div>
-}
+
+    <div class="card billing-table-card mt-4">
+        <div class="billing-table-header">
+            <div>
+                <h3 class="m-0">Open billing queue</h3>
+                <small class="text-600">Takeaway orders are included so the counter team can settle pickup payments.</small>
+            </div>
+            <p-tag [value]="todayPaymentsCount + ' payments today'" severity="success"></p-tag>
+        </div>
+
+        <p-table [value]="servedOrders" [loading]="loading" responsiveLayout="stack" [breakpoint]="'768px'">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Order</th>
+                    <th>Channel</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-order>
+                <tr>
+                    <td data-label="Order">#{{ order.id }}</td>
+                    <td data-label="Channel">
+                        <div class="flex align-items-center gap-2">
+                            <span>{{ getOrderChannel(order) }}</span>
+                            @if (isTakeawayOrder(order)) {
+                                <p-tag value="Pack order" severity="warn"></p-tag>
+                            }
+                        </div>
+                    </td>
+                    <td data-label="Items">{{ order.itemsText }}</td>
+                    <td data-label="Total">{{ currencySymbol }}{{ order.total.toFixed(2) }}</td>
+                    <td data-label="Status">
+                        <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+                    </td>
+                    <td data-label="Action">
+                        <button pButton type="button" label="Open billing" icon="pi pi-wallet" (click)="openPaymentDialog(order)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        @if (servedOrders.length === 0 && !loading) {
+            <div class="empty-copy">
+                <p>No unpaid served or takeaway orders found.</p>
+            </div>
+        }
+    </div>
 </div>
 
-<p-dialog header="Confirm Payment"
- [(visible)]="paymentDialogVisible"
-  [modal]="true"
-   [style]="{ width: '30rem' }">
-    @if (currentOrder){
+<p-dialog
+    header="Pay bill"
+    [(visible)]="paymentDialogVisible"
+    [modal]="true"
+    [style]="{ width: '58rem', maxWidth: '98vw', height: 'min(98vh, 64rem)' }"
+    [breakpoints]="{ '1200px': '96vw', '768px': '100vw' }"
+    styleClass="billing-payment-dialog">
+    @if (currentOrder) {
+        <div class="payment-desk">
+            <section class="payment-entry">
+                <div class="desk-toolbar">
+                    <div class="service-badge">
+                        <span>Service</span>
+                        <strong>{{ serviceLabel }}</strong>
+                    </div>
 
-    <div>
-        <div class="mb-3"><strong>Order:</strong> #{{ currentOrder.id }}</div>
+                    <div class="invoice-toolbar">
+                        <button
+                            type="button"
+                            class="invoice-action"
+                            [class.active]="invoiceDelivery === 'none'"
+                            (click)="setInvoiceDelivery('none')">
+                            No invoice
+                        </button>
+                        <button
+                            type="button"
+                            class="invoice-action"
+                            [class.active]="invoiceDelivery === 'print'"
+                            (click)="setInvoiceDelivery('print')">
+                            Print invoice
+                        </button>
+                        <button
+                            type="button"
+                            class="invoice-action"
+                            [class.active]="invoiceDelivery === 'email'"
+                            (click)="setInvoiceDelivery('email')">
+                            Email invoice
+                        </button>
+                    </div>
+                </div>
 
-        <div class="mb-3"><strong>Table:</strong> {{ currentOrder.table }}</div>
+                <div class="method-list">
+                    @for (method of paymentMethodCards; track method.value) {
+                        <button
+                            type="button"
+                            class="method-card"
+                            [class.active]="selectedPaymentMethod === method.value"
+                            (click)="selectPaymentMethod(method.value)">
+                            <i [class]="method.icon"></i>
+                            <span>{{ method.label }}</span>
+                        </button>
+                    }
+                </div>
 
-        <div class="mb-3"><strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}</div>
+                <div class="tip-grid">
+                    @for (tip of quickTipPercents; track tip) {
+                        <button type="button" class="tip-chip" (click)="applyTipPercent(tip)">
+                            {{ tip === 0 ? 'No tip' : tip + '% tip' }}
+                        </button>
+                    }
+                    <button type="button" class="tip-chip" (click)="setActiveField('tipAmount')">Custom tip</button>
+                </div>
 
-        <div class="field mb-4">
-            <label for="paymentMethod" class="block mb-2 font-medium">Payment Method</label>
-            <p-select
-             inputId="paymentMethod" 
-            [options]="paymentMethodOptions"
-             [(ngModel)]="selectedPaymentMethod"
-              optionLabel="label" 
-              optionValue="value" 
-              appendTo="body"
-              class="w-full"> 
-            </p-select>
+                <div class="tip-route">
+                    <span>Tip goes to {{ tipPaymentLabel }}</span>
+                    <button type="button" class="payment-help-trigger" (click)="togglePaymentHelp()">
+                        <i class="pi pi-info-circle"></i>
+                    </button>
+                </div>
+
+                @if (paymentHelpVisible) {
+                    <div class="payment-help-popover">
+                        <strong>Split and tip help</strong>
+                        <p class="m-0">In split mode, editing cash updates card automatically, and editing card updates cash automatically.</p>
+                        <p class="m-0">Tip follows the current payment method, so it is added into cash, card, or QR without leaving extra remaining balance.</p>
+                    </div>
+                }
+
+                <div class="entry-targets">
+                    @for (row of paymentBreakdownRows; track row.field) {
+                        <button
+                            type="button"
+                            class="entry-target"
+                            [class.active]="activeInputField === row.field"
+                            (click)="setActiveField(row.field)">
+                            <span>{{ row.label }}</span>
+                            <strong>{{ currencySymbol }}{{ row.amount.toFixed(2) }}</strong>
+                        </button>
+                    }
+
+                    <button
+                        type="button"
+                        class="entry-target"
+                        [class.active]="activeInputField === 'tipAmount'"
+                        (click)="setActiveField('tipAmount')">
+                        <span>Tip</span>
+                        <strong>{{ currencySymbol }}{{ tipAmount.toFixed(2) }}</strong>
+                    </button>
+                </div>
+
+                <div class="keypad-grid">
+                    @for (digit of ['1', '2', '3']; track digit) {
+                        <button type="button" class="keypad-key" (click)="appendDigit(digit)">{{ digit }}</button>
+                    }
+                    <button type="button" class="keypad-key keypad-key--quick" (click)="addQuickAmount(quickAmountButtons[0])">+{{ quickAmountButtons[0] }}</button>
+
+                    @for (digit of ['4', '5', '6']; track digit) {
+                        <button type="button" class="keypad-key" (click)="appendDigit(digit)">{{ digit }}</button>
+                    }
+                    <button type="button" class="keypad-key keypad-key--quick" (click)="addQuickAmount(quickAmountButtons[1])">+{{ quickAmountButtons[1] }}</button>
+
+                    @for (digit of ['7', '8', '9']; track digit) {
+                        <button type="button" class="keypad-key" (click)="appendDigit(digit)">{{ digit }}</button>
+                    }
+                    <button type="button" class="keypad-key keypad-key--quick" (click)="addQuickAmount(quickAmountButtons[2])">+{{ quickAmountButtons[2] }}</button>
+
+                    <button type="button" class="keypad-key keypad-key--warn" (click)="clearActiveField()">C</button>
+                    <button type="button" class="keypad-key" (click)="appendDigit('0')">0</button>
+                    <button type="button" class="keypad-key keypad-key--soft" (click)="appendDecimal()">.</button>
+                    <button type="button" class="keypad-key keypad-key--danger" (click)="backspace()">
+                        <i class="pi pi-delete-left"></i>
+                    </button>
+                </div>
+
+                <div class="payment-actions payment-actions--dock">
+                    <button pButton type="button" label="Back" severity="secondary" [outlined]="true" (click)="paymentDialogVisible = false" [disabled]="savingPayment"></button>
+                    <button
+                        pButton
+                        type="button"
+                        [label]="savingPayment ? 'Saving...' : 'Mark paid'"
+                        (click)="markPaid()"
+                        [disabled]="!canConfirmPayment || savingPayment"></button>
+                </div>
+            </section>
+
+            <section class="payment-summary">
+                <div class="payment-total">
+                    <div class="payment-total-head">
+                        <small>Total due</small>
+                        <span class="summary-service">{{ serviceLabel }}</span>
+                    </div>
+                    <div class="payment-total-figure">
+                        <strong>{{ paymentTotalDisplay }}</strong>
+                        <span>{{ currencySymbol }}</span>
+                    </div>
+                    <div class="payment-total-subcopy">
+                        <span>Order {{ currencySymbol }}{{ orderAmountDisplay }}</span>
+                        <span>Tip {{ currencySymbol }}{{ tipAmount.toFixed(2) }}</span>
+                    </div>
+                </div>
+
+                <div class="payment-meta">
+                    <span>Order #{{ currentOrder.id }}</span>
+                    <span>{{ selectedPaymentMethod }}</span>
+                </div>
+
+                <div class="payment-lines">
+                    @for (row of paymentBreakdownRows; track row.field) {
+                        <div class="payment-line">
+                            <button type="button" class="payment-line-main" (click)="setActiveField(row.field)">
+                                <span>{{ row.label }}</span>
+                                <strong>{{ currencySymbol }}{{ row.amount.toFixed(2) }}</strong>
+                            </button>
+                            <button type="button" class="payment-line-remove" (click)="removePaymentField(row.field)">
+                                <i class="pi pi-times"></i>
+                            </button>
+                        </div>
+                    }
+
+                    @if (tipAmount > 0) {
+                        <div class="payment-line payment-line--tip">
+                            <button type="button" class="payment-line-main" (click)="setActiveField('tipAmount')">
+                                <span>Tip</span>
+                                <strong>{{ currencySymbol }}{{ tipAmount.toFixed(2) }}</strong>
+                            </button>
+                            <button type="button" class="payment-line-remove" (click)="removePaymentField('tipAmount')">
+                                <i class="pi pi-times"></i>
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <div class="payment-balance">
+                    <div>
+                        <span>Remaining</span>
+                        <strong class="danger">{{ currencySymbol }}{{ remainingAmount.toFixed(2) }}</strong>
+                    </div>
+
+                    @if (changeAmount > 0) {
+                        <div>
+                            <span>Change</span>
+                            <strong class="success">{{ currencySymbol }}{{ changeAmount.toFixed(2) }}</strong>
+                        </div>
+                    }
+                </div>
+            </section>
         </div>
+    }
+</p-dialog>
 
-        <div class="flex justify-content-end gap-2">
-            <button pButton type="button" label="Cancel" severity="secondary" (click)="paymentDialogVisible = false"></button>
+<p-dialog
+    header="Email invoice"
+    [(visible)]="invoiceEmailDialogVisible"
+    [modal]="true"
+    [style]="{ width: '36rem', maxWidth: '96vw' }"
+    [breakpoints]="{ '768px': '100vw' }"
+    styleClass="billing-email-dialog">
+    @if (invoiceDraft) {
+        <div class="invoice-email-dialog">
+            <div class="invoice-email-head">
+                <span class="summary-service">{{ invoiceDraft.serviceLabel }}</span>
+                <strong>{{ currencySymbol }}{{ invoiceDraft.grandTotal.toFixed(2) }}</strong>
+            </div>
 
-            <button pButton type="button" label="Confirm Paid" severity="success" (click)="markPaid()"></button>
+            <div class="invoice-email-fields">
+                <label for="invoice-dialog-email">Customer email</label>
+                <input
+                    pInputText
+                    id="invoice-dialog-email"
+                    type="email"
+                    [(ngModel)]="invoiceEmail"
+                    placeholder="customer@example.com" />
+
+                <label for="invoice-dialog-subject">Subject</label>
+                <input pInputText id="invoice-dialog-subject" type="text" [(ngModel)]="invoiceSubject" />
+
+                <label for="invoice-dialog-body">Message</label>
+                <textarea id="invoice-dialog-body" rows="10" [(ngModel)]="invoiceBody"></textarea>
+            </div>
+
+            <div class="invoice-email-note">
+                Use <strong>Print / Save PDF</strong> to open the invoice in the browser print window, then choose Print or Save as PDF.
+            </div>
+
+            <div class="payment-actions invoice-email-actions">
+                <button pButton type="button" label="Close" severity="secondary" [outlined]="true" (click)="closeInvoiceEmailDialog()"></button>
+                <button pButton type="button" label="Print / Save PDF" severity="secondary" (click)="printInvoiceFromDialog()"></button>
+            </div>
         </div>
-    </div>
     }
 </p-dialog>

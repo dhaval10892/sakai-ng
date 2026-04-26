@@ -9,9 +9,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { timer, Subscription, switchMap } from 'rxjs';
 
 import { RestaurantTable } from '../../../../core/models/table.model';
 import { TablesService } from '../../../../core/services/tables.service';
+import { BookingRequest } from '@/app/core/models/booking-request.model';
+import { BookingRequestService } from '@/app/core/services/booking-request.service';
+import { NotificationService } from '@/app/core/services/notification.service';
 
 @Component({
   selector: 'app-table-list',
@@ -33,9 +37,15 @@ import { TablesService } from '../../../../core/services/tables.service';
 })
 export class TableList {
   tables: RestaurantTable[] = [];
+  bookingRequests: BookingRequest[] = [];
   isEditMode = false;
   isVisible = false;
   loading = false;
+  qrDialogVisible = false;
+  selectedQrTable?: RestaurantTable;
+  private refreshSubscription?: Subscription;
+  private knownPendingBookingIds = new Set<number>();
+  private hasLoadedBookings = false;
 
   currentTable: RestaurantTable = this.getEmptyTable();
 
@@ -47,25 +57,48 @@ export class TableList {
 
   constructor(
     private tablesService: TablesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private bookingRequestService: BookingRequestService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
-    this.loadTables();
+    this.startAutoRefresh();
   }
 
-  loadTables(): void {
-    this.loading = true;
+  ngOnDestroy(): void {
+    this.refreshSubscription?.unsubscribe();
+  }
+
+  startAutoRefresh(): void {
+    this.refreshSubscription?.unsubscribe();
+    this.refreshSubscription = timer(0, 5000)
+      .pipe(switchMap(() => this.bookingRequestService.getAll()))
+      .subscribe({
+        next: (bookings) => {
+          this.bookingRequests = bookings;
+          this.notifyNewBookings(bookings);
+          this.loadTables(false);
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Failed to refresh booking requests', error);
+        }
+      });
+  }
+
+  loadTables(showLoader = true): void {
+    this.loading = showLoader;
     this.tablesService.getAllTables().subscribe({
       next: (tables) => {
         this.tables = tables;
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Failed to load tables', error);
         this.loading = false;
-        alert('Failed to load tables from API.');
+        this.notificationService.showApiError(error, 'Failed to load tables from API.');
       }
     });
   }
@@ -95,7 +128,7 @@ export class TableList {
     this.currentTable.number = this.currentTable.number.trim().toUpperCase();
 
     if (!this.currentTable.number || this.currentTable.seats <= 0) {
-      alert('Please enter a valid table number and seats.');
+      this.notificationService.warn('Invalid table', 'Please enter a valid table number and seats.');
       return;
     }
 
@@ -106,7 +139,7 @@ export class TableList {
     );
 
     if (duplicateTable) {
-      alert('Table number already exists.');
+      this.notificationService.warn('Duplicate table', 'Table number already exists.');
       return;
     }
 
@@ -116,10 +149,11 @@ export class TableList {
           this.loadTables();
           this.isVisible = false;
           this.currentTable = this.getEmptyTable();
+          this.notificationService.success('Table updated', 'Table updated successfully.');
         },
         error: (error) => {
           console.error('Failed to update table', error);
-          alert('Failed to update table.');
+          this.notificationService.showApiError(error, 'Failed to update table.');
         }
       });
     } else {
@@ -128,10 +162,11 @@ export class TableList {
           this.loadTables();
           this.isVisible = false;
           this.currentTable = this.getEmptyTable();
+          this.notificationService.success('Table created', 'Table created successfully.');
         },
         error: (error) => {
           console.error('Failed to add table', error);
-          alert('Failed to add table.');
+          this.notificationService.showApiError(error, 'Failed to add table.');
         }
       });
     }
@@ -141,10 +176,11 @@ export class TableList {
     this.tablesService.updateTableStatus(table.number, 'Available').subscribe({
       next: () => {
         this.loadTables();
+        this.notificationService.success('Table updated', `Table ${table.number} marked available.`);
       },
       error: (error) => {
         console.error('Failed to update table status', error);
-        alert('Failed to update table status.');
+        this.notificationService.showApiError(error, 'Failed to update table status.');
       }
     });
   }
@@ -156,12 +192,76 @@ export class TableList {
     this.tablesService.deleteTable(id).subscribe({
       next: () => {
         this.loadTables();
+        this.notificationService.success('Table deleted', 'Table deleted successfully.');
       },
       error: (error) => {
         console.error('Failed to delete table', error);
-        alert('Failed to delete table.');
+        this.notificationService.showApiError(error, 'Failed to delete table.');
       }
     });
+  }
+
+  confirmBooking(booking: BookingRequest): void {
+    this.bookingRequestService.updateStatus(booking.id, 'Confirmed').subscribe({
+      next: () => {
+        this.tablesService.updateTableStatus(booking.tableNumber, 'Reserved').subscribe({
+          next: () => {
+            this.notificationService.success('Booking confirmed', `Booking for ${booking.tableNumber} confirmed.`);
+            this.startAutoRefresh();
+          },
+          error: (error) => {
+            this.notificationService.showApiError(error, 'Booking confirmed, but failed to reserve the table.');
+          }
+        });
+      },
+      error: (error) => {
+        this.notificationService.showApiError(error, 'Failed to confirm booking.');
+      }
+    });
+  }
+
+  rejectBooking(booking: BookingRequest): void {
+    this.bookingRequestService.updateStatus(booking.id, 'Rejected').subscribe({
+      next: () => {
+        this.notificationService.success('Booking updated', `Booking #${booking.id} rejected.`);
+        this.startAutoRefresh();
+      },
+      error: (error) => {
+        this.notificationService.showApiError(error, 'Failed to reject booking.');
+      }
+    });
+  }
+
+  openQrDialog(table: RestaurantTable): void {
+    this.selectedQrTable = table;
+    this.qrDialogVisible = true;
+  }
+
+  getOrderUrl(table: RestaurantTable): string {
+    return `${window.location.origin}/qr-menu/${encodeURIComponent(table.number)}`;
+  }
+
+  getQrImageUrl(table: RestaurantTable): string {
+    return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(this.getOrderUrl(table))}`;
+  }
+
+  private notifyNewBookings(bookings: BookingRequest[]): void {
+    const pendingBookings = bookings.filter((booking) => booking.status === 'Pending');
+    const latestPendingIds = new Set(pendingBookings.map((booking) => booking.id));
+
+    if (this.hasLoadedBookings) {
+      pendingBookings
+        .filter((booking) => !this.knownPendingBookingIds.has(booking.id))
+        .forEach((booking) => {
+          this.notificationService.success(
+            'New table booking',
+            `${booking.guestName} requested ${booking.seats} seats on ${booking.bookingDate} at ${booking.bookingTime}.`
+          );
+        });
+    }
+
+    this.knownPendingBookingIds = latestPendingIds;
+    this.hasLoadedBookings = true;
   }
 
   getSeverity(status: string) {

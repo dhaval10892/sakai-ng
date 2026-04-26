@@ -1,13 +1,11 @@
 <div class="layout">
-  <!-- Sidebar -->
   <aside class="sidebar">
-    
-    <!-- Logo / Title -->
     <div class="sidebar-header">
-      <h2>🍽️ SaaS Admin</h2>
+      <span class="eyebrow">Restaurant SaaS</span>
+      <h2>Control Center</h2>
+      <p>Manage brands, restaurants, and growth from one warm, modern workspace.</p>
     </div>
 
-    <!-- Navigation -->
     <nav class="sidebar-nav">
       <a routerLink="/super-admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <i class="pi pi-home"></i>
@@ -20,7 +18,6 @@
       </a>
     </nav>
 
-    <!-- Logout -->
     <div class="sidebar-footer">
       <button
         pButton
@@ -31,13 +28,12 @@
         class="w-full"
         (click)="logout()">
       </button>
-     
     </div>
-
   </aside>
 
-  <!-- Content -->
   <main>
-    <router-outlet></router-outlet>
+    <div class="admin-main-shell">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

@@ -52,7 +52,8 @@ public class UserManagementService : IUserManagementService
                 Username = user.UserName ?? string.Empty,
                 DisplayName = user.DisplayName ?? string.Empty,
                 Role = roles.FirstOrDefault() ?? string.Empty,
-                IsActive = user.IsActive
+                IsActive = user.IsActive,
+                RestaurantId = user.RestaurantId ?? 0
             });
         }
 
@@ -72,13 +73,24 @@ public class UserManagementService : IUserManagementService
             Username = user.UserName ?? string.Empty,
             DisplayName = user.DisplayName ?? string.Empty,
             Role = roles.FirstOrDefault() ?? string.Empty,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            RestaurantId = user.RestaurantId ?? 0
         };
     }
 
     public async Task<(bool Success, string Message, UserDto? User)> CreateAsync(CreateUserDto dto)
     {
-        var existing = await _userManager.FindByNameAsync(dto.Username);
+        if (!_tenant.IsSuperAdmin && !_tenant.RestaurantId.HasValue)
+            return (false, "Restaurant context was not found for the current user.", null);
+
+        dto.Username = dto.Username.Trim();
+        dto.DisplayName = dto.DisplayName.Trim();
+
+        var normalizedUsername = _userManager.NormalizeName(dto.Username);
+        var existing = await _userManager.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(user => user.NormalizedUserName == normalizedUsername);
+
         if (existing != null)
             return (false, "Username already exists.", null);
 
@@ -86,7 +98,8 @@ public class UserManagementService : IUserManagementService
         {
             UserName = dto.Username,
             DisplayName = dto.DisplayName,
-            IsActive = true
+            IsActive = true,
+            RestaurantId = _tenant.IsSuperAdmin ? null : _tenant.RestaurantId
         };
 
         var createResult = await _userManager.CreateAsync(user, dto.Password);
@@ -105,6 +118,21 @@ public class UserManagementService : IUserManagementService
         }
 
         var createdUser = await GetByIdAsync(user.Id);
+
+        if (createdUser == null)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            createdUser = new UserDto
+            {
+                Id = user.Id,
+                Username = user.UserName ?? string.Empty,
+                DisplayName = user.DisplayName ?? string.Empty,
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                IsActive = user.IsActive,
+                RestaurantId = user.RestaurantId ?? 0
+            };
+        }
+
         return (true, "User created successfully.", createdUser);
     }
     public async Task<(bool Success, string Message)> UpdateStatusAsync(string id, UpdateUserStatusDto dto)

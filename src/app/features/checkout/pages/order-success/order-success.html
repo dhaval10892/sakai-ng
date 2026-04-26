@@ -1,23 +1,220 @@
-<div class="card">
-    <h1>Order Placed Successfully</h1>
-    <p class="mt-3">
- Your Order for <strong>Table {{tableNumber ||'N/A'}}</strong> has been placed.
-    </p>
-     <p class="mt-2">
-    Selected payment mode: <strong>{{ paymentMode || 'N/A' }}</strong>
-  </p>
-  <p class="mt-2">
-    The kitchen has received your order and it will now appear in the staff workflow.
-  </p>
-<div class="mt-4">
-    <button
-        pButton
-        type="button"
-        (click)="backToMenu()"
-        label="Back to Menu"
-        icon="pi pi-arrow-left"
-    ></button>
-    <button pButton type="button"  (click)="goToKitchen()" label="go to kitchen"></button>
-</div>
-</div>
+<div class="success-shell">
+    <section class="success-hero">
+        <div class="success-copy">
+            <span class="eyebrow">{{ orderType === 'Takeaway' ? 'Pickup live' : 'Dining room live' }}</span>
+            <h1>Your {{ orderType === 'Takeaway' ? 'take away' : 'table' }} order is being plated with care.</h1>
+            <p>
+                We have sent your order for <strong>{{ tableNumber || (orderType === 'Takeaway' ? 'Take Away' : 'Dine In') }}</strong> at
+                <strong>{{ restaurantSettings?.restaurantName || restaurantName || 'the restaurant' }}</strong>. Follow the journey with a live tracker that refreshes every 5 seconds.
+            </p>
 
+            <p-message severity="success" styleClass="success-message" text="Your order was placed successfully and sent to the restaurant."></p-message>
+            <p-message
+                severity="info"
+                styleClass="success-message"
+                text="Want to add more items? Add them from the menu and they will stay on this table bill."
+            ></p-message>
+
+            <div class="hero-service-notes">
+                <div class="service-note">
+                    <i class="pi pi-shop"></i>
+                    <span>Kitchen started</span>
+                </div>
+                <div class="service-note">
+                    <i class="pi pi-bell"></i>
+                    <span>Waiter notified</span>
+                </div>
+                <div class="service-note">
+                    <i class="pi pi-refresh"></i>
+                    <span>Auto-sync on</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-badge-card">
+            <span class="badge-label">Chef's pass</span>
+            <div class="badge-ring">
+                <i [class]="currentStep.icon"></i>
+            </div>
+            <strong>{{ customerStatusTitle }}</strong>
+            <span>{{ customerStatusDescription }}</span>
+        </div>
+    </section>
+
+    <div class="success-grid">
+        <section class="success-panel summary-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="mini-label">Order summary</span>
+                    <h2>What we captured</h2>
+                </div>
+            </div>
+
+            <div class="summary-list">
+                <div class="summary-row">
+                    <span>Service</span>
+                    <strong>{{ tableNumber || (orderType === 'Takeaway' ? 'Take Away' : 'Dine In') }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Payment mode</span>
+                    <strong>{{ paymentMode || 'N/A' }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>{{ taxName }}</span>
+                    <strong>{{ (taxRate * 100) | number:'1.0-2' }}%</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Current status</span>
+                    <strong>{{ currentStatus }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Last synced</span>
+                    <strong>{{ lastUpdatedLabel }}</strong>
+                </div>
+            </div>
+
+            <div class="customer-bill-card">
+                <div class="bill-card-header">
+                    <div>
+                        <span class="mini-label">Customer bill</span>
+                        <h3>Bill summary</h3>
+                    </div>
+                    <button
+                        pButton
+                        type="button"
+                        label="Print Bill"
+                        icon="pi pi-print"
+                        severity="secondary"
+                        [outlined]="true"
+                        (click)="printBill()"
+                    ></button>
+                </div>
+
+                <div class="bill-line">
+                    <span>Subtotal</span>
+                    <strong>{{ currencySymbol }}{{ orderSubtotal | number:'1.2-2' }}</strong>
+                </div>
+                <div class="bill-line">
+                    <span>{{ taxName }}</span>
+                    <strong>{{ currencySymbol }}{{ orderTaxAmount | number:'1.2-2' }}</strong>
+                </div>
+                <div class="bill-line total">
+                    <span>Total due</span>
+                    <strong>{{ currencySymbol }}{{ orderTotal | number:'1.2-2' }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="success-panel next-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="mini-label">Live order tracking</span>
+                    <h2>Track your order in real time</h2>
+                </div>
+            </div>
+
+            <div class="tracking-overview-card" [class]="liveStatusTone">
+                <div class="tracking-atmosphere"></div>
+
+                <div class="tracking-overview-top">
+                    <div class="tracking-live-pill" [class]="liveStatusTone">
+                        <span class="live-dot"></span>
+                        <span>Service line live</span>
+                    </div>
+                    <span class="tracking-progress-label">{{ trackingProgressLabel }}</span>
+                </div>
+
+                <div class="tracking-headline">
+                    <div>
+                        <strong>{{ customerStatusTitle }}</strong>
+                        <p>{{ customerStatusDescription }}</p>
+                    </div>
+                </div>
+
+                <div class="tracking-stage-banner">
+                    <div class="stage-chip current">
+                        <span class="stage-chip-label">Current course</span>
+                        <strong>{{ currentStepTitle }}</strong>
+                    </div>
+                    <div class="stage-chip next">
+                        <span class="stage-chip-label">Coming next</span>
+                        <strong>{{ nextStepTitle }}</strong>
+                    </div>
+                </div>
+
+                <div class="tracking-progress-shell" aria-hidden="true">
+                    <div class="tracking-progress-fill" [style.width.%]="trackingProgress"></div>
+                </div>
+
+                <div class="tracking-stepper">
+                    @for (step of trackingSteps; track step.status; let last = $last) {
+                        <div
+                            class="stepper-step"
+                            [class.current]="step.isCurrent"
+                            [class.completed]="step.isCompleted"
+                            [class.upcoming]="step.isUpcoming"
+                        >
+                            <div class="stepper-marker">
+                                <div class="stepper-dot">
+                                    @if (step.isCompleted) {
+                                        <i class="pi pi-check"></i>
+                                    } @else {
+                                        <i [class]="step.icon"></i>
+                                    }
+                                </div>
+                                @if (!last) {
+                                    <div class="stepper-line"></div>
+                                }
+                            </div>
+                            <div class="stepper-copy">
+                                <span class="step-kicker">Stage {{ step.stepNumber }}</span>
+                                <strong>{{ step.title }}</strong>
+                                <p>{{ step.description }}</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="tracking-status-card">
+                    <div class="status-card-block">
+                        <span class="status-card-label">Now in service</span>
+                        <strong>{{ currentStepTitle }}</strong>
+                        <p>{{ customerStatusDescription }}</p>
+                    </div>
+
+                    <div class="status-card-divider"></div>
+
+                    <div class="status-card-block">
+                        <span class="status-card-label">Next cue</span>
+                        <strong>{{ nextStepTitle }}</strong>
+                        <p>{{ nextStepDescription }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button
+                    pButton
+                    type="button"
+                    (click)="addMoreItems()"
+                    label="Add More Items"
+                    icon="pi pi-plus"
+                    severity="success"
+                ></button>
+                <button
+                    pButton
+                    type="button"
+                    (click)="backToMenu()"
+                    label="Back to Menu"
+                    icon="pi pi-arrow-left"
+                    severity="secondary"
+                    [outlined]="true"
+                ></button>
+            </div>
+        </section>
+    </div>
+</div>

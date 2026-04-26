@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <p-table [value]="filteredOrders" [loading]="loading" >
+  <p-table [value]="filteredOrders" [loading]="loading" responsiveLayout="stack" [breakpoint]="'768px'">
     <ng-template pTemplate="header">
       <tr>
         <th>Order ID</th>
@@ -37,15 +37,15 @@
 
     <ng-template pTemplate="body" let-order>
       <tr>
-        <td>#{{ order.id }}</td>
-        <td>{{ order.table }}</td>
-        <td>{{ order.itemsText }}</td>
-        <td>${{ order.total.toFixed(2) }}</td>
-        <td>
+        <td data-label="Order ID">#{{ order.id }}</td>
+        <td data-label="Table">{{ order.table }}</td>
+        <td data-label="Items">{{ order.itemsText }}</td>
+        <td data-label="Total">{{ currencySymbol }}{{ order.total.toFixed(2) }}</td>
+        <td data-label="Status">
           <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
         </td>
-        <td>{{ order.createdAt | date:'short' }}</td>
-        <td>
+        <td data-label="Created">{{ order.createdAt | date:'short' }}</td>
+        <td data-label="Actions">
           <div class="flex gap-2 flex-wrap">
             <button
               pButton
@@ -81,6 +81,8 @@
   header="Order Details"
   [(visible)]="detailsDialogVisible"
   [modal]="true"
+  [style]="{ width: '36rem', maxWidth: '96vw' }"
+  [breakpoints]="{ '768px': '96vw', '575px': '100vw' }"
   >
 
   <div class="mb-3">
@@ -101,14 +103,14 @@
   </div>
 
   <div class="mb-3">
-    <strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}
+    <strong>Total:</strong> {{ currencySymbol }}{{ currentOrder.total.toFixed(2) }}
   </div>
 
   <div class="mb-3">
     <strong>Items:</strong>
   </div>
 
-  <p-table [value]="currentOrder.items" responsiveLayout="scroll">
+  <p-table [value]="currentOrder.items" responsiveLayout="stack" [breakpoint]="'768px'">
     <ng-template pTemplate="header">
       <tr>
         <th>Item</th>
@@ -120,10 +122,10 @@
 
     <ng-template pTemplate="body" let-item>
       <tr>
-        <td>{{ item.menuItemName }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>${{ item.unitPrice.toFixed(2) }}</td>
-        <td>${{ item.totalPrice.toFixed(2) }}</td>
+        <td data-label="Item">{{ item.menuItemName }}</td>
+        <td data-label="Qty">{{ item.quantity }}</td>
+        <td data-label="Unit Price">{{ currencySymbol }}{{ item.unitPrice.toFixed(2) }}</td>
+        <td data-label="Total">{{ currencySymbol }}{{ item.totalPrice.toFixed(2) }}</td>
       </tr>
     </ng-template>
   </p-table>
@@ -133,7 +135,8 @@
   header="Edit Order"
   [(visible)]="editDialogVisible"
   [modal]="true"
-  [style]="{ width: '32rem' }">
+  [style]="{ width: '32rem', maxWidth: '96vw' }"
+  [breakpoints]="{ '768px': '96vw', '575px': '100vw' }">
 
   <div class="field mb-3">
     <label for="table" class="block mb-2 font-medium">Table</label>
@@ -166,10 +169,10 @@
   </div>
 
   <div class="mb-4">
-    <strong>Total:</strong> ${{ currentOrder.total.toFixed(2) }}
+    <strong>Total:</strong> {{ currencySymbol }}{{ currentOrder.total.toFixed(2) }}
   </div>
 
-  <div class="flex justify-content-end gap-2">
+  <div class="flex justify-content-end gap-2 flex-wrap">
     <button
       pButton
       type="button"

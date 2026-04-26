@@ -43,19 +43,30 @@ public class MenuController : ControllerBase
     public IActionResult Update(int id, [FromBody] MenuItemDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Namr is required");
-        if (string.IsNullOrWhiteSpace(dto.CategoryName)) return BadRequest("Category is required");
+        if (dto.MenuCategoryId <= 0) return BadRequest("Category is required");
         if (dto.Price <= 0) return BadRequest("Price must be greter than Zero");
+        if (dto.StockQuantity < 0) return BadRequest("Stock quantity cannot be negative");
+        if (dto.LowStockThreshold < 0) return BadRequest("Low stock threshold cannot be negative");
+        try
+        {
         var updated = _menuService.Update(id, dto);
         if (!updated) { return NotFound(); }
         return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     [HttpPost]
     public IActionResult Create([FromBody] MenuItemDto dto)
     {
         var restaurantId = _tenant.RestaurantId;
         if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Namr is required");
-        if (string.IsNullOrWhiteSpace(dto.CategoryName)) return BadRequest("Category is required");
+        if (dto.MenuCategoryId <= 0) return BadRequest("Category is required");
         if (dto.Price <= 0) return BadRequest("Price must be greter than Zero");
+        if (dto.StockQuantity < 0) return BadRequest("Stock quantity cannot be negative");
+        if (dto.LowStockThreshold < 0) return BadRequest("Low stock threshold cannot be negative");
 
         if (restaurantId == null)
             return Unauthorized();
@@ -66,11 +77,20 @@ public class MenuController : ControllerBase
             CategoryName = dto.CategoryName,
             Price = dto.Price,
             Available = dto.Available,
+            StockQuantity = dto.StockQuantity,
+            LowStockThreshold = dto.LowStockThreshold,
             ImageUrl = dto.ImageUrl,
-            RestaurantId = dto.RestaurantId
+            RestaurantId = restaurantId.Value
         };
+        try
+        {
         var created = _menuService.Create(item);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)

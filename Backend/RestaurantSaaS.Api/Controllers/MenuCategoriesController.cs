@@ -42,12 +42,19 @@ private CurrentTenantService _tenant;
     [HttpPost]
     public IActionResult Create([FromBody]MenuCategoryDto dto)
     {
-            var created=_menuCatrgoriesService.Create(dto);
             if(String.IsNullOrWhiteSpace(dto.Name))
              return BadRequest(" Category Name is required ");
+            try
+            {
+            var created=_menuCatrgoriesService.Create(dto);
              if(created==null) return StatusCode(500,"Created is null");
 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
     }
 [HttpPut("{id}")]
     public IActionResult Update(int id,[FromBody]MenuCategoryDto dto)

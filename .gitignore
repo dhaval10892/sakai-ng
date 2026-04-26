@@ -47,6 +47,9 @@ Thumbs.db
 **/obj/
 *.user
 *.suo
+Backend/.dotnet/
+Backend/.nuget/
+Backend/artifacts/
 
 # Logs
 *.log

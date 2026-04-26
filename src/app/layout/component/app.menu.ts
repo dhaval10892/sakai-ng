@@ -42,26 +42,29 @@ export class AppMenu implements OnInit {
         { label: 'Reports', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/reports'] },
         { label: 'Users', icon: 'pi pi-fw pi-user', routerLink: ['/admin/users'] },
         { label: 'Activity Logs', icon: 'pi pi-fw pi-history', routerLink: ['/admin/activity-logs'] },
+        { label: 'Reset Password', icon: 'pi pi-fw pi-lock', routerLink: ['/profile/security'] },
       );
     }
 
     if (role === 'Kitchen') {
       items.push(
         { label: 'Kitchen', icon: 'pi pi-fw pi-inbox', routerLink: ['/kitchen'] },
-        {label:'Reset Password', icon:'pi pi-fw pi-inbox',routerLink:['/profile/security']}
+        { label: 'Reset Password', icon: 'pi pi-fw pi-lock', routerLink: ['/profile/security'] }
       );
     }
 
     if (role === 'Waiter') {
       items.push(
-        { label: 'Waiter', icon: 'pi pi-fw pi-users', routerLink: ['/waiter'] }
+        { label: 'Waiter', icon: 'pi pi-fw pi-users', routerLink: ['/waiter'] },
+        { label: 'Reset Password', icon: 'pi pi-fw pi-lock', routerLink: ['/profile/security'] }
       );
     }
 
     if (role === 'Billing') {
       items.push(
         { label: 'Billing', icon: 'pi pi-fw pi-credit-card', routerLink: ['/billing'] },
-        { label: 'Reports', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/reports'] }
+        { label: 'Reports', icon: 'pi pi-fw pi-chart-bar', routerLink: ['/reports'] },
+        { label: 'Reset Password', icon: 'pi pi-fw pi-lock', routerLink: ['/profile/security'] }
       );
     }
 

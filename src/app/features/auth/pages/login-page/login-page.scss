@@ -1,0 +1,183 @@
+.login-shell {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(380px, 0.85fr);
+    background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.22), transparent 26rem),
+        radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.2), transparent 28rem),
+        linear-gradient(135deg, #0f172a 0%, #172554 48%, #1d4ed8 100%);
+    overflow: hidden;
+}
+
+.login-backdrop {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0) 35%),
+        linear-gradient(0deg, rgba(191, 219, 254, 0.05), rgba(191, 219, 254, 0));
+    pointer-events: none;
+}
+
+.login-showcase,
+.login-panel {
+    position: relative;
+    z-index: 1;
+}
+
+.login-showcase {
+    padding: clamp(2rem, 5vw, 5rem);
+    color: #eff6ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.72rem;
+}
+
+.showcase-copy h1 {
+    max-width: 12ch;
+    margin: 1.25rem 0 1rem;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 0.94;
+    color: #f8fbff;
+}
+
+.showcase-copy p,
+.showcase-stats span {
+    max-width: 34rem;
+    color: rgba(219, 234, 254, 0.86);
+    font-size: 1.02rem;
+    line-height: 1.7;
+}
+
+.showcase-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+}
+
+.showcase-pills span,
+.showcase-stats article {
+    border-radius: 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(18px);
+}
+
+.showcase-pills span {
+    padding: 0.85rem 1rem;
+    color: #eff6ff;
+    font-weight: 600;
+}
+
+.showcase-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.showcase-stats article {
+    padding: 1.2rem;
+}
+
+.showcase-stats strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #f8fbff;
+    font-size: 1.05rem;
+}
+
+.login-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.login-card {
+    width: min(100%, 30rem);
+    padding: clamp(1.8rem, 4vw, 2.8rem);
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 40px 80px rgba(15, 23, 42, 0.22);
+    backdrop-filter: blur(24px);
+}
+
+.brand-mark {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1.1rem;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #60a5fa, #1d4ed8);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+}
+
+.login-card h2 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.login-subtitle {
+    margin: 0.6rem 0 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.form-grid label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+.error-banner {
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: rgba(188, 47, 47, 0.08);
+    color: #b42318;
+    border: 1px solid rgba(188, 47, 47, 0.14);
+}
+
+.login-button {
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 960px) {
+    .login-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .login-showcase {
+        padding-bottom: 0;
+    }
+
+    .showcase-copy h1 {
+        max-width: 100%;
+        font-size: clamp(2.5rem, 11vw, 4rem);
+    }
+
+    .showcase-stats {
+        grid-template-columns: 1fr;
+    }
+}
