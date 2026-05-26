@@ -3,10 +3,15 @@
     "version": "21.0.0",
     "scripts": {
         "ng": "ng",
+        "init:assets": "git submodule update --init --recursive",
+        "prestart": "npm run init:assets",
         "start": "ng serve",
+        "prebuild": "npm run init:assets",
         "build": "ng build",
+        "prewatch": "npm run init:assets",
         "watch": "ng build --watch --configuration development",
         "format": "prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
+        "pretest": "npm run init:assets",
         "test": "ng test"
     },
     "private": true,
