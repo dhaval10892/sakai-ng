@@ -189,7 +189,6 @@ add_run(p, 'UrbanRoots: A Hyperlocal Farm-to-Consumer Digital Marketplace',
         italic=True, size=13)
 _apply_spacing(p, before=0, after=4)
 
-# Horizontal rule
 p = doc.add_paragraph()
 pPr  = p._p.get_or_add_pPr()
 pBdr = OxmlElement('w:pBdr')
@@ -222,42 +221,31 @@ doc.add_paragraph()
 h1('1. Project Description')
 
 body(
-    'The idea for UrbanRoots started with a straightforward observation: I live in a city '
-    'surrounded by small farms, yet the tomatoes in my grocery store were grown in Mexico. '
-    'That gap \u2014 between what\u2019s available locally and what actually ends up on '
-    'people\u2019s plates \u2014 is the problem this project is trying to solve. It\u2019s not '
-    'a niche concern: local food systems have real environmental, economic, and community '
-    'benefits that are going unrealized simply because the buying experience is too inconvenient.'
+    'UrbanRoots is a mobile-first digital marketplace connecting local farmers and small '
+    'food producers directly with city consumers. Despite growing consumer demand for '
+    'locally sourced food, buying it remains genuinely inconvenient: farmers\u2019 markets '
+    'operate a few hours per week, CSA programmes require months-long commitments, and '
+    'mainstream grocery delivery platforms are dominated by national distributors whose '
+    'products travel hundreds of kilometres before reaching a household. UrbanRoots closes '
+    'that gap through a two-sided platform where producers get a simple digital storefront '
+    'and order management tools, and consumers get a browsable app to discover nearby '
+    'farms, view seasonal availability, and schedule delivery or pickup. The pilot will '
+    'launch in one Canadian city before the team evaluates expansion.'
 )
 body(
-    'UrbanRoots is a mobile-first digital marketplace connecting local farmers and small food '
-    'producers directly with city consumers. The core problem it addresses is one most people '
-    'recognize: buying locally grown food is genuinely inconvenient. Farmers\u2019 markets run '
-    'a few hours on Saturday mornings, CSA programmes require months-long commitments, and most '
-    'grocery delivery apps are digital storefronts for the same national distributors. The '
-    'platform is designed as a two-sided marketplace: producers get a simple storefront and '
-    'order management tools, while consumers get a browsable app to find nearby farms, see '
-    'what\u2019s in season, and schedule delivery or pickup. The pilot will launch in one '
-    'Canadian city before the team decides whether and how to expand.'
-)
-body(
-    'The final shape of this product is not fully determined. Whether consumers prefer '
-    'subscriptions or one-off orders, how to best structure last-mile logistics, and which '
-    'producer onboarding features matter most are all questions that need real user data to '
-    'answer. That uncertainty is exactly why Agile is the right framework: the product must '
-    'evolve through feedback rather than a fixed upfront specification. The roadmap that '
-    'follows is a starting point, not a finished blueprint.'
+    'The final product is not fully defined yet \u2014 the right mix of subscription '
+    'models, logistics partnerships, and onboarding support will emerge from real user '
+    'behaviour, not upfront assumptions. This is precisely why Agile is the appropriate '
+    'framework for this project.'
 )
 
 h2('Problem / Opportunity Statement')
 body(
-    'Most urban Canadians say they want to buy more local food, but they don\u2019t \u2014 '
-    'because the infrastructure simply isn\u2019t convenient enough to become a habit '
-    '(Statistics Canada, 2023). At the same time, small-scale producers spend significant '
-    'time on logistics and marketing they didn\u2019t sign up for when they decided to farm. '
-    'UrbanRoots addresses both sides of this market gap by building digital infrastructure '
-    'that makes buying local as easy as ordering from any grocery app, while keeping the '
-    'money with the people actually growing the food.'
+    'Most urban Canadians say they want to buy local food but don\u2019t, because '
+    'convenient access doesn\u2019t exist (Statistics Canada, 2023). Meanwhile, '
+    'small-scale producers spend significant time on logistics and marketing they didn\u2019t '
+    'sign up for. UrbanRoots addresses both sides: making local food as easy to buy as any '
+    'grocery app, while keeping revenue with the people growing it.'
 )
 
 
@@ -273,14 +261,11 @@ body(
     italic=True
 )
 body(
-    'The long-term goal for UrbanRoots is not just another marketplace app \u2014 it\u2019s '
-    'a meaningful shift in how urban food systems work. If this succeeds, local producers '
-    'will have a revenue channel they can genuinely plan around, not just a side income from '
-    'weekend markets. Consumers will trust the platform enough that buying local becomes a '
-    'default routine, not an occasional choice. Success will be measured not only in '
-    'transactions and downloads, but in whether farmers are earning more, whether food waste '
-    'in the supply chain is going down, and whether communities feel a genuine connection to '
-    'where their food comes from. That\u2019s the goal. The app is just the vehicle.'
+    'The long-term ambition is a meaningful shift in how urban food systems work: local '
+    'producers with a revenue channel they can plan around, consumers who buy local by '
+    'default rather than occasionally, and supply chains with less waste and a smaller '
+    'carbon footprint. Success will be measured not only in transactions but in producer '
+    'income growth and community food resilience.'
 )
 
 
@@ -290,28 +275,19 @@ body(
 h1('3. Minimum Viable Product (MVP)')
 
 body(
-    'Before building anything large or complicated, the most important question to answer '
-    'is a simple one: will people actually use this? The MVP is a lean but fully functional '
-    'version of the platform \u2014 enough to run a real six-week beta with 12\u201315 local '
-    'producers and 250\u2013300 consumers in one city, and to learn something meaningful from '
-    'how they actually behave. That\u2019s not a huge cohort, but it\u2019s enough to see real '
-    'patterns rather than survey responses. The beta period matters more than the feature '
-    'list: what users actually do in the product will shape every decision made afterward.'
+    'The MVP is a fully functional but narrowly scoped version of the platform, designed '
+    'to run a six-week beta with 12\u201315 producers and 250\u2013300 consumers in one '
+    'city. The goal is not a polished final product \u2014 it is learning whether the '
+    'core experience works before committing to building more.'
 )
 
 h2('MVP Features')
-bul('A simple storefront with a short bio, photos, and production notes \u2014 just enough '
-    'for a consumer to know who they\u2019re buying from.', 'Producer profiles')
-bul('Producers list products with prices and availability. Consumers browse by category '
-    'or proximity.', 'Product catalogue')
-bul('Add to cart, choose a delivery or pickup slot, and pay via Stripe \u2014 completable '
-    'in under two minutes on a phone.', 'Order and checkout')
-bul('Producers or a partner courier confirm and track deliveries within a 20 km radius.',
-    'Delivery scheduling')
-bul('Consumers view order history and re-order past purchases in one tap.',
-    'Consumer account')
-bul('Producers see incoming orders, mark them as fulfilled, and track basic sales figures.',
-    'Producer order dashboard')
+bul('Simple producer storefront: bio, photos, and production notes.', 'Producer profiles')
+bul('Product listings with pricing and availability; consumers browse by category or proximity.', 'Product catalogue')
+bul('Cart, delivery or pickup slot selection, and Stripe payment \u2014 completable in under two minutes.', 'Order and checkout')
+bul('Producers or a partner courier confirm and track deliveries within a 20 km radius.', 'Delivery scheduling')
+bul('Order history and one-tap re-order for repeat purchases.', 'Consumer account')
+bul('Real-time incoming orders, fulfilment status, and basic sales figures for producers.', 'Producer dashboard')
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -321,24 +297,15 @@ h1('4. Roadmap')
 
 h2('4.1  Agile Framework and Team Structure')
 body(
-    'UrbanRoots will use the Scrum framework. Scrum was selected because the final product '
-    'isn\u2019t fully defined, consumer behaviour in this space is difficult to predict '
-    'without real-world data, and the team needs the ability to reprioritize quickly based '
-    'on what users actually show us rather than what we assumed they wanted (Schwaber & '
-    'Sutherland, 2020). A waterfall approach would require upfront decisions that simply '
-    'can\u2019t be made responsibly yet. The Scrum team includes a Product Owner (backlog '
-    'ownership and prioritization decisions), a Scrum Master (ceremony facilitation and '
-    'impediment removal), a cross-functional Development Team (two front-end developers, '
-    'one back-end developer, one UX/UI designer, one QA engineer), and Stakeholders '
-    'including pilot producers, early-adopter consumers, and a logistics partner '
-    'representative who attend Sprint Reviews.'
+    'UrbanRoots uses the Scrum framework because the end state is not fully defined and '
+    'the team must be able to reprioritize based on real user feedback (Schwaber & '
+    'Sutherland, 2020). The Scrum team comprises a Product Owner, Scrum Master, a '
+    'cross-functional Development Team (two front-end developers, one back-end developer, '
+    'one UX/UI designer, one QA engineer), and Stakeholders including pilot producers, '
+    'early-adopter consumers, and a logistics partner representative.'
 )
 
 h2('4.2  Product Backlog')
-body(
-    'Backlog items are ordered by customer value, technical dependency, and risk. '
-    'The list will be updated after every Sprint Review.'
-)
 make_table(
     data=[
         ('#', 'User Story', 'Priority', 'Sprint Target'),
@@ -388,89 +355,67 @@ doc.add_paragraph()
 
 h3('Sprint 1: Foundation & Discovery (Weeks 1\u20138)')
 body(
-    'The team conducts structured interviews with 20 consumers and 10 prospective producers '
-    'before writing a single line of production code. The rule is simple: every design '
-    'decision \u2014 navigation structure, checkout flow, producer onboarding \u2014 must be '
-    'grounded in what those conversations reveal, not in what the team assumed going in. '
-    'Key deliverables include the technical architecture decision (React Native for mobile, '
-    'Node.js/PostgreSQL on the backend), a finalized sitemap, interactive wireframes, and '
-    'the producer profile feature deployed to a staging environment for internal review.'
+    'Structured interviews with 20 consumers and 10 prospective producers inform every '
+    'design decision before any code is written. Deliverables: technical architecture '
+    'decision (React Native, Node.js/PostgreSQL), sitemap, wireframes, and the producer '
+    'profile feature deployed to staging.'
 )
 body('User Stories and Acceptance Criteria:', bold=True)
 bul('\u201cAs a consumer, I want to browse local producers by distance.\u201d \u2014 '
-    'Done when: producers appear sorted by proximity; geolocation prompts work on both '
-    'iOS and Android without errors.')
+    'Done when: producers listed by proximity; geolocation works on iOS and Android without errors.')
 bul('\u201cAs a producer, I want to create a storefront profile.\u201d \u2014 '
-    'Done when: producer can register, upload photos, write a bio, and publish \u2014 '
-    'profile visible to consumers within five minutes, no admin bottleneck.')
+    'Done when: producer registers, publishes profile, visible to consumers within five minutes.')
 
 h3('Sprint 2: MVP Development (Weeks 9\u201316)')
 body(
-    'Sprint 2 delivers the transactional core: product catalogue, shopping cart, Stripe '
-    'payment, producer order dashboard, and delivery scheduling. Accessibility to WCAG 2.1 AA '
-    'is tested throughout \u2014 not deferred to Sprint 3.'
+    'Builds the transactional core: product catalogue, cart, Stripe checkout, producer '
+    'order dashboard, and delivery scheduling. Accessibility to WCAG 2.1 AA is tested '
+    'throughout, not deferred to Sprint 3.'
 )
 body('User Stories and Acceptance Criteria:', bold=True)
 bul('\u201cAs a consumer, I want to add products to a cart and check out securely.\u201d '
-    '\u2014 Done when: payment succeeds in Stripe test environment, no card data stored '
-    'on our servers, confirmation email arrives within 60 seconds.')
+    '\u2014 Done when: Stripe payment succeeds in test environment; confirmation email '
+    'arrives within 60 seconds; no card data stored on our servers.')
 bul('\u201cAs a producer, I want to see and manage my incoming orders.\u201d \u2014 '
-    'Done when: orders appear on dashboard within 30 seconds; producer can mark each as '
+    'Done when: orders appear on dashboard within 30 seconds; producer can mark each '
     'confirmed, in progress, or fulfilled.')
-bul('\u201cAs a consumer, I want to pick a delivery or pickup window.\u201d \u2014 '
-    'Done when: at least three slots appear at checkout; selection shows correctly in the '
-    'order summary and producer notification.')
 
 h3('Sprint 3: Testing, Optimization & Beta Launch (Weeks 17\u201324)')
 body(
-    'The beta cohort \u2014 12 producers and 250\u2013300 consumers \u2014 uses the live '
-    'app for six weeks. Sprint Reviews draw directly from that feedback, and the backlog '
-    'is re-prioritized after each one. Buffer is deliberately built into this sprint because '
-    'things will break and surprises will come up. That\u2019s not a pessimistic prediction '
-    '\u2014 it\u2019s just how beta launches go, and responding quickly to what real users '
-    'find matters more than rigidly following a pre-set plan.'
+    'The live beta runs for six weeks with the full cohort. Sprint Reviews draw directly '
+    'from user feedback; the backlog is re-prioritized after each one. Buffer is '
+    'intentionally built in \u2014 surprises during a beta are expected, not exceptional.'
 )
 body('User Stories and Acceptance Criteria:', bold=True)
 bul('\u201cAs a QA engineer, I want automated regression tests on every build.\u201d '
-    '\u2014 Done when: suite covers 80% of critical user paths; all tests pass before '
-    'any production deployment.')
-bul('\u201cAs a consumer, I want to re-order my last purchase in one tap.\u201d \u2014 '
-    'Done when: re-order button in order history adds same items to cart; completed in '
-    'no more than two taps.')
+    '\u2014 Done when: suite covers 80% of critical paths; all tests pass before any '
+    'production deployment.')
 
 h2('4.4  Scrum Ceremonies (All Sprints)')
-body('These four ceremonies run consistently throughout the project. They are not optional '
-     'formalities \u2014 each one serves a specific purpose in keeping the team aligned '
-     'and the work on track:')
-bul('Held at the start of each two-week sprint: backlog items selected, effort estimated '
-    'in story points, sprint goal agreed upon.', 'Sprint Planning')
-bul('15-minute daily stand-up: what did you finish, what\u2019s next, what\u2019s '
-    'blocking you.', 'Daily Scrum')
-bul('End-of-sprint demo to stakeholders including pilot producers; feedback goes '
-    'directly into the backlog.', 'Sprint Review')
-bul('Honest team reflection: what worked, what didn\u2019t, one or two concrete '
-    'process changes for the next sprint.', 'Sprint Retrospective')
+bul('Backlog items selected, effort estimated in story points, sprint goal set.', 'Sprint Planning')
+bul('15-minute daily stand-up: what\u2019s done, what\u2019s next, what\u2019s blocking.', 'Daily Scrum')
+bul('End-of-sprint demo to stakeholders; feedback updates the backlog immediately.', 'Sprint Review')
+bul('Team reflection on what to keep, stop, and improve for the next sprint.', 'Sprint Retrospective')
 
 h2('4.5  Risk Management')
-body('Key risks identified through early producer and legal conversations:')
 make_table(
     data=[
         ('Risk', 'Likelihood', 'Impact', 'Mitigation'),
-        ('Provincial food safety laws may restrict direct sales in some markets',
+        ('Provincial food safety laws may restrict direct producer-to-consumer sales',
          'Medium', 'High',
-         'Engage food-law consultant in Sprint 1; build province-specific compliance flags from day one.'),
-        ('Producers may struggle to adopt the platform if it feels too technical',
+         'Food-law consultant engaged in Sprint 1; province-specific compliance flags built in from day one.'),
+        ('Low producer adoption due to digital literacy barriers',
          'Medium', 'High',
-         'Run hands-on onboarding workshops; assign a dedicated producer success contact for the beta period.'),
-        ('Last-mile delivery logistics may be harder than anticipated',
+         'Hands-on onboarding workshops; dedicated producer success contact for the beta period.'),
+        ('Last-mile delivery logistics more complex than anticipated',
          'High', 'Medium',
-         'Partner with existing local courier; limit delivery radius to 20 km for MVP.'),
+         'Partner with existing local courier; delivery radius capped at 20 km for MVP.'),
         ('Scope creep from mid-sprint stakeholder requests',
          'High', 'Medium',
          'All new requests enter the backlog; nothing added to a sprint in progress.'),
-        ('Payment security gaps exposing consumer financial data',
+        ('Payment security vulnerabilities exposing consumer data',
          'Low', 'High',
-         "Use Stripe\u2019s fully managed infrastructure; run third-party security audit before beta launch."),
+         "Stripe\u2019s fully managed infrastructure used; third-party security audit before beta launch."),
     ],
     col_widths=[Inches(2.0), Inches(0.78), Inches(0.67), Inches(2.55)],
 )
@@ -478,15 +423,14 @@ make_table(
 h2('4.6  Success Measures')
 bul('App live on iOS and Google Play by end of Sprint 3, no critical open bugs')
 bul('At least 12 active producer storefronts at beta launch')
-bul('Minimum 200 completed transactions during the six-week beta period')
-bul('Consumer app rating averaging 4.0 or higher post-beta')
-bul('Producer NPS of +30 or higher')
-bul('System uptime at 99% or above throughout the beta')
+bul('Minimum 200 completed consumer transactions during the six-week beta')
+bul('Consumer app rating averaging 4.0 or higher; producer NPS of +30 or higher')
+bul('System uptime at 99% or above throughout the beta period')
 
-h2('4.7  Future Enhancements')
+h2('4.7  Future Enhancements (Post-MVP)')
 bul('Weekly subscription produce boxes personalized by purchase history')
 bul('AI-driven demand forecasting dashboard for producers to optimize planting cycles')
-bul('B2B channel for restaurants, schools, and food co-operatives sourcing locally at volume')
+bul('B2B channel for restaurants, schools, and food co-operatives')
 
 
 # ════════════════════════════════════════════════════════════════════════════
