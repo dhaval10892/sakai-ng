@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agile Project Roadmap – UrbanRoots</title>
+  <style>
+    /* Mimics a printed business document: 1-inch margins, 12pt font */
+    @page {
+      size: letter;
+      margin: 1in;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 12pt;
+      line-height: 1.5;
+      color: #000;
+      background: #fff;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 1in;
+    }
+
+    /* ── Title block ── */
+    .cover-block {
+      text-align: center;
+      margin-bottom: 28pt;
+    }
+
+    .cover-block h1 {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6pt;
+    }
+
+    .cover-block h2 {
+      font-size: 13pt;
+      font-weight: normal;
+      font-style: italic;
+      margin-bottom: 4pt;
+    }
+
+    .cover-block p {
+      font-size: 11pt;
+      color: #333;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 2px solid #000;
+      margin: 16pt 0 20pt 0;
+    }
+
+    hr.thin {
+      border: none;
+      border-top: 1px solid #666;
+      margin: 10pt 0;
+    }
+
+    /* ── Section headings ── */
+    h2.section-title {
+      font-size: 13pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 22pt;
+      margin-bottom: 8pt;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 3pt;
+    }
+
+    h3.sub-title {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-top: 14pt;
+      margin-bottom: 4pt;
+    }
+
+    h4.sprint-label {
+      font-size: 12pt;
+      font-weight: bold;
+      font-style: italic;
+      margin-top: 12pt;
+      margin-bottom: 4pt;
+    }
+
+    /* ── Body text ── */
+    p {
+      margin-bottom: 8pt;
+      text-align: justify;
+    }
+
+    ul {
+      margin-left: 22pt;
+      margin-bottom: 8pt;
+    }
+
+    ul li {
+      margin-bottom: 4pt;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10pt;
+      margin-bottom: 12pt;
+      font-size: 11pt;
+    }
+
+    table thead tr {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    table thead th {
+      padding: 6pt 8pt;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table tbody tr:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    table tbody td {
+      padding: 5pt 8pt;
+      vertical-align: top;
+      border: 1px solid #ccc;
+    }
+
+    /* ── Roadmap visual timeline ── */
+    .timeline {
+      display: flex;
+      gap: 0;
+      margin: 14pt 0 18pt 0;
+    }
+
+    .timeline-item {
+      flex: 1;
+      border: 1.5px solid #000;
+      padding: 8pt 10pt;
+    }
+
+    .timeline-item:not(:last-child) {
+      border-right: none;
+    }
+
+    .timeline-item .sprint-num {
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #555;
+      margin-bottom: 3pt;
+    }
+
+    .timeline-item .sprint-name {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 3pt;
+    }
+
+    .timeline-item .sprint-weeks {
+      font-size: 10pt;
+      font-style: italic;
+      color: #444;
+      margin-bottom: 6pt;
+    }
+
+    .timeline-item ul {
+      margin-left: 14pt;
+      font-size: 10pt;
+    }
+
+    /* ── References ── */
+    .references p {
+      text-indent: -22pt;
+      padding-left: 22pt;
+      margin-bottom: 6pt;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { padding: 0; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════ COVER ════════════════════════ -->
+  <div class="cover-block">
+    <h1>Agile Project Roadmap</h1>
+    <h2>UrbanRoots: A Hyperlocal Farm-to-Consumer Digital Marketplace</h2>
+    <hr class="divider" />
+    <p><strong>Project Type:</strong> Start-Up Venture</p>
+    <p><strong>Framework:</strong> Agile – Scrum</p>
+    <p><strong>Prepared by:</strong> [Student Name]</p>
+    <p><strong>Date:</strong> May 2026</p>
+  </div>
+
+  <!-- ════════════════════════ 1. PROJECT DESCRIPTION ════════════════════════ -->
+  <h2 class="section-title">1. Project Description</h2>
+
+  <p>
+    UrbanRoots is a proposed mobile-first digital marketplace that connects small-scale local
+    farmers, urban food producers, and home gardeners directly with city-based consumers. The
+    platform is designed to address a persistent friction point in the local food system: despite
+    strong and growing consumer interest in purchasing locally sourced food, most urban households
+    have no practical, convenient way to discover or regularly buy from nearby producers. Farmers'
+    markets operate only a few hours per week, community-supported agriculture (CSA) programmes
+    require months-long commitments, and general grocery delivery platforms are dominated by
+    national distributors whose products can travel hundreds or thousands of kilometres before
+    reaching a consumer's table.
+  </p>
+
+  <p>
+    UrbanRoots aims to close this gap by building a two-sided marketplace: producers gain a
+    low-cost digital storefront with order management tools, while consumers gain an intuitive
+    browsing and checkout experience, flexible subscription options, and transparent supply-chain
+    information (e.g., distance from farm, harvest date, and production practices). The platform
+    will initially be piloted in one mid-sized Canadian metropolitan area before evaluating
+    expansion.
+  </p>
+
+  <p>
+    The project is fundamentally exploratory. Consumer behaviour around local food is highly
+    variable, provincial regulations for direct food sales differ, and the optimal mix of
+    logistics, subscription models, and producer onboarding remains undetermined. These
+    conditions make Agile the appropriate framework: the product must evolve based on real
+    user feedback rather than a fixed upfront specification.
+  </p>
+
+  <h3 class="sub-title">Problem / Opportunity Statement</h3>
+  <p>
+    Urban consumers increasingly want to know where their food originates, yet the infrastructure
+    connecting them with local producers remains fragmented and inconvenient. Small-scale farmers
+    simultaneously face significant barriers to direct-to-consumer sales: limited digital tools,
+    minimal marketing capacity, and no logistics infrastructure. UrbanRoots addresses both sides
+    of this market failure through a purpose-built digital platform.
+  </p>
+
+  <!-- ════════════════════════ 2. VISION STATEMENT ════════════════════════ -->
+  <h2 class="section-title">2. Vision Statement</h2>
+
+  <p>
+    <em>"To build a trusted and thriving local food ecosystem where every urban household can
+    access fresh, locally grown food within 24 hours of harvest, while empowering small-scale
+    farmers and food producers to sustain viable livelihoods through direct, dignified, and
+    technology-enabled commerce."</em>
+  </p>
+
+  <p>
+    Over the long term, UrbanRoots will become the default infrastructure layer for hyperlocal
+    food distribution in Canadian cities—as familiar and reliable as mainstream grocery delivery,
+    yet deeply rooted in local community and ecological sustainability. Success will be measured
+    not only by transaction volume, but by producer income growth, food waste reduction, and
+    local food network resilience.
+  </p>
+
+  <!-- ════════════════════════ 3. MINIMUM VIABLE PRODUCT ════════════════════════ -->
+  <h2 class="section-title">3. Minimum Viable Product (MVP)</h2>
+
+  <p>
+    The MVP for UrbanRoots is a functional web and mobile application (iOS and Android) that
+    allows a curated group of local producers to list products and receive orders, and a cohort of
+    early adopter consumers to browse, purchase, and schedule delivery or pickup. The MVP is
+    intentionally narrow in scope: it will not attempt to solve every aspect of local food
+    distribution, but will instead validate the core value proposition—that a well-designed digital
+    experience can reliably connect urban consumers with nearby producers in a repeatable,
+    satisfying way.
+  </p>
+
+  <h3 class="sub-title">MVP Features</h3>
+  <ul>
+    <li><strong>Producer profiles:</strong> A simple onboarding flow allowing producers to create a
+      storefront with a short bio, photos, and a description of their production practices.</li>
+    <li><strong>Product catalogue:</strong> Producers can list available products with pricing,
+      quantity limits, and expected availability windows. Consumers can browse by product category
+      or location.</li>
+    <li><strong>Order and checkout flow:</strong> Consumers can add items to a cart, select a
+      delivery or pickup slot, and complete payment via integrated payment gateway (Stripe).</li>
+    <li><strong>Delivery scheduling module:</strong> A basic logistics tool allowing producers or a
+      contracted courier to confirm and track deliveries within a defined urban zone.</li>
+    <li><strong>Consumer account and order history:</strong> Registered consumers can view past
+      orders, re-order frequently purchased items, and manage account settings.</li>
+    <li><strong>Producer order dashboard:</strong> A simple backend dashboard giving producers a
+      real-time view of incoming orders, fulfilment status, and basic sales analytics.</li>
+  </ul>
+
+  <p>
+    The MVP will be deployed to a pilot cohort of 12–15 producers and approximately 250–300
+    consumers in a single metropolitan area over a six-week beta period. Feedback from this cohort
+    will directly inform the product backlog for subsequent development cycles.
+  </p>
+
+  <!-- ════════════════════════ 4. ROADMAP ════════════════════════ -->
+  <h2 class="section-title">4. Roadmap</h2>
+
+  <h3 class="sub-title">4.1 Agile Framework and Team Structure</h3>
+  <p>
+    UrbanRoots will be developed using the Scrum framework. Scrum was selected because the end
+    state of the product is not fully defined, consumer behaviour in this space is difficult to
+    predict without real-world data, and the team needs the ability to re-prioritize rapidly based
+    on sprint reviews and stakeholder feedback (Schwaber &amp; Sutherland, 2020). The Scrum team
+    will comprise the following roles:
+  </p>
+  <ul>
+    <li><strong>Product Owner:</strong> Responsible for maintaining and prioritizing the product
+      backlog, representing the interests of consumers, producers, and investors.</li>
+    <li><strong>Scrum Master:</strong> Facilitates all Scrum ceremonies, removes impediments, and
+      coaches the team on Agile best practices.</li>
+    <li><strong>Development Team:</strong> A cross-functional team of two front-end developers, one
+      back-end developer, one UX/UI designer, and one QA engineer.</li>
+    <li><strong>Stakeholders:</strong> Pilot producers, early-adopter consumer testers, and a
+      logistics partner representative who participate in Sprint Reviews.</li>
+  </ul>
+
+  <h3 class="sub-title">4.2 Product Backlog</h3>
+  <p>
+    The product backlog represents the full universe of features and improvements identified at
+    project inception. Items are ordered by priority based on customer value, technical dependency,
+    and risk reduction. The backlog will be continuously refined throughout the project.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:5%;">#</th>
+        <th style="width:45%;">Backlog Item (User Story)</th>
+        <th style="width:20%;">Priority</th>
+        <th style="width:30%;">Sprint Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>As a consumer, I want to browse local producers by distance so I can find farms near me.</td>
+        <td>High</td>
+        <td>Sprint 1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>As a producer, I want to create a storefront profile so consumers can learn about my farm.</td>
+        <td>High</td>
+        <td>Sprint 1</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>As a consumer, I want to add products to a cart and check out securely so I can place an order.</td>
+        <td>High</td>
+        <td>Sprint 2</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>As a producer, I want to receive and manage incoming orders on a dashboard so I can fulfil them efficiently.</td>
+        <td>High</td>
+        <td>Sprint 2</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>As a consumer, I want to schedule a delivery or pickup window so the experience fits my routine.</td>
+        <td>High</td>
+        <td>Sprint 2</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>As a QA engineer, I want to run automated regression tests so defects are caught before each release.</td>
+        <td>Medium</td>
+        <td>Sprint 3</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>As a consumer, I want to re-order past purchases in one tap so repeat buying is seamless.</td>
+        <td>Medium</td>
+        <td>Sprint 3</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>As a consumer, I want to subscribe to a weekly produce box so I can reduce decision fatigue.</td>
+        <td>Low</td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>As a producer, I want an AI-driven demand forecast so I can plan planting and harvests more accurately.</td>
+        <td>Low</td>
+        <td>Post-MVP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">4.3 Sprint Overview</h3>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="sprint-num">Sprint 1</div>
+      <div class="sprint-name">Foundation &amp; Discovery</div>
+      <div class="sprint-weeks">Weeks 1–8 (4 × 2-week sprints)</div>
+      <ul>
+        <li>User research &amp; producer interviews</li>
+        <li>Sitemap &amp; information architecture</li>
+        <li>UX wireframes &amp; design system</li>
+        <li>Producer profile &amp; browse features</li>
+      </ul>
+    </div>
+    <div class="timeline-item">
+      <div class="sprint-num">Sprint 2</div>
+      <div class="sprint-name">MVP Development</div>
+      <div class="sprint-weeks">Weeks 9–16 (4 × 2-week sprints)</div>
+      <ul>
+        <li>Product catalogue &amp; cart</li>
+        <li>Checkout &amp; payment integration</li>
+        <li>Producer order dashboard</li>
+        <li>Delivery scheduling module</li>
+      </ul>
+    </div>
+    <div class="timeline-item">
+      <div class="sprint-num">Sprint 3</div>
+      <div class="sprint-name">Testing, Optimization &amp; Launch</div>
+      <div class="sprint-weeks">Weeks 17–24 (4 × 2-week sprints)</div>
+      <ul>
+        <li>Beta pilot with real users</li>
+        <li>Performance &amp; accessibility testing</li>
+        <li>Bug fixing &amp; UX improvements</li>
+        <li>App store submission &amp; soft launch</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SPRINT 1 -->
+  <h4 class="sprint-label">Sprint 1: Foundation &amp; Discovery (Weeks 1–8)</h4>
+  <p>
+    The first sprint cycle focuses on learning before building. The team will conduct structured
+    interviews with 20 target consumers and 10 prospective producer partners to validate core
+    assumptions about the platform. Key technical outputs include the application architecture
+    decision (React Native for cross-platform mobile, Node.js/PostgreSQL backend), a finalized
+    sitemap, and interactive wireframes for all MVP screens.
+  </p>
+  <p><strong>User Stories and Acceptance Criteria:</strong></p>
+  <ul>
+    <li><em>"As a consumer, I want to browse local producers by distance."</em>
+      — Acceptance: Consumer can view a list of producers sorted by proximity; geolocation
+      permission is requested and handled gracefully on both iOS and Android.</li>
+    <li><em>"As a producer, I want to create a storefront profile."</em>
+      — Acceptance: Producer can register, upload photos, write a bio, and publish their profile;
+      profile is visible to consumers within 5 minutes of publication.</li>
+  </ul>
+
+  <!-- SPRINT 2 -->
+  <h4 class="sprint-label">Sprint 2: MVP Development (Weeks 9–16)</h4>
+  <p>
+    Sprint 2 delivers the transactional core of the platform. The development team will build the
+    product catalogue, shopping cart, Stripe payment integration, producer order dashboard, and
+    the delivery scheduling module. Mobile responsiveness and accessibility (WCAG 2.1 AA) will be
+    tested throughout this cycle, not deferred to Sprint 3.
+  </p>
+  <p><strong>User Stories and Acceptance Criteria:</strong></p>
+  <ul>
+    <li><em>"As a consumer, I want to add products to a cart and check out securely."</em>
+      — Acceptance: Payment succeeds in test environment with no PCI data stored client-side;
+      consumer receives an order confirmation email within 60 seconds of checkout.</li>
+    <li><em>"As a producer, I want to receive and manage incoming orders on a dashboard."</em>
+      — Acceptance: New orders appear on the producer dashboard within 30 seconds; producer can
+      mark orders as confirmed, in-progress, or fulfilled.</li>
+    <li><em>"As a consumer, I want to schedule a delivery or pickup window."</em>
+      — Acceptance: Consumer can choose from at least three available time slots; selected slot is
+      confirmed in the order summary and producer notification.</li>
+  </ul>
+
+  <!-- SPRINT 3 -->
+  <h4 class="sprint-label">Sprint 3: Testing, Optimization &amp; Beta Launch (Weeks 17–24)</h4>
+  <p>
+    The final sprint cycle centres on quality assurance, performance optimization, and the
+    controlled beta launch. A closed cohort of 12 producers and 250–300 consumers will use the
+    live application for six weeks. Sprint Reviews during this phase will draw directly on beta
+    feedback, and the backlog will be re-prioritized in real time based on what users actually do
+    in the product versus what was anticipated.
+  </p>
+  <p><strong>User Stories and Acceptance Criteria:</strong></p>
+  <ul>
+    <li><em>"As a QA engineer, I want to run automated regression tests."</em>
+      — Acceptance: Test suite covers 80% of critical user paths; all tests pass before each
+      production deployment.</li>
+    <li><em>"As a consumer, I want to re-order past purchases in one tap."</em>
+      — Acceptance: Re-order button appears in order history; tapping it adds the same items to
+      cart with a single confirmation step.</li>
+  </ul>
+
+  <h3 class="sub-title">4.4 Scrum Ceremonies (Common Across All Sprints)</h3>
+  <p>
+    The following four ceremonies will be observed consistently throughout the project lifecycle:
+  </p>
+  <ul>
+    <li><strong>Sprint Planning:</strong> Held at the start of each two-week sprint. The team
+      collaboratively selects backlog items, estimates effort using story points, and agrees on a
+      sprint goal.</li>
+    <li><strong>Daily Scrum:</strong> A 15-minute stand-up each morning. Each team member
+      addresses: what was completed yesterday, what is planned for today, and whether any
+      impediments exist.</li>
+    <li><strong>Sprint Review:</strong> Held at the end of each sprint. Completed work is
+      demonstrated to stakeholders (including pilot producers) for feedback. The product backlog
+      is updated based on the discussion.</li>
+    <li><strong>Sprint Retrospective:</strong> An internal team meeting to reflect on process
+      improvements—what worked well, what did not, and what the team will change in the next
+      sprint.</li>
+  </ul>
+
+  <h3 class="sub-title">4.5 Risk Management</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Risk</th>
+        <th>Likelihood</th>
+        <th>Impact</th>
+        <th>Mitigation Strategy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Provincial food safety regulations vary and may restrict direct producer-to-consumer sales</td>
+        <td>Medium</td>
+        <td>High</td>
+        <td>Engage a food-law consultant in Sprint 1; design platform to support compliance flags per province</td>
+      </tr>
+      <tr>
+        <td>Low producer adoption due to digital literacy barriers</td>
+        <td>Medium</td>
+        <td>High</td>
+        <td>Conduct hands-on onboarding workshops; assign a dedicated producer success role for the beta period</td>
+      </tr>
+      <tr>
+        <td>Logistics complexity (cold chain, last-mile delivery) exceeds MVP scope</td>
+        <td>High</td>
+        <td>Medium</td>
+        <td>Partner with an existing local courier in Sprint 2; limit delivery radius to 20 km for MVP</td>
+      </tr>
+      <tr>
+        <td>Scope creep from stakeholder feature requests</td>
+        <td>High</td>
+        <td>Medium</td>
+        <td>Enforce strict sprint scope gates; all new requests enter the backlog and are prioritized in Sprint Review</td>
+      </tr>
+      <tr>
+        <td>Payment security vulnerabilities</td>
+        <td>Low</td>
+        <td>High</td>
+        <td>Use Stripe's fully managed payment infrastructure; conduct third-party security audit before beta launch</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">4.6 Success Measures</h3>
+  <ul>
+    <li>Successful soft launch of the application on iOS App Store and Google Play by the end of Sprint 3</li>
+    <li>At least 12 active producer storefronts live at the time of beta launch</li>
+    <li>Minimum 200 completed consumer transactions during the six-week beta period</li>
+    <li>Average consumer app rating of 4.0 or higher following beta</li>
+    <li>Producer net promoter score (NPS) of +30 or higher at the end of the beta period</li>
+    <li>System uptime of 99% or greater throughout the beta phase</li>
+  </ul>
+
+  <h3 class="sub-title">4.7 Future Enhancements (Post-MVP Backlog)</h3>
+  <p>
+    The following features are out of scope for the MVP but have been identified as high-value
+    candidates for future development cycles, pending validation during the beta phase:
+  </p>
+  <ul>
+    <li>Weekly subscription produce box with personalization based on consumer purchase history</li>
+    <li>AI-driven demand forecasting dashboard for producers to optimize planting cycles</li>
+    <li>B2B ordering module for restaurants, schools, and food co-operatives</li>
+  </ul>
+
+  <!-- ════════════════════════ REFERENCES ════════════════════════ -->
+  <h2 class="section-title">References</h2>
+  <div class="references">
+    <p>
+      Cohn, M. (2004). <em>User stories applied: For agile software development.</em> Addison-Wesley.
+    </p>
+    <p>
+      Fowler, M., &amp; Highsmith, J. (2001). The agile manifesto. <em>Software Development,
+      9</em>(8), 28–35.
+    </p>
+    <p>
+      Ries, E. (2011). <em>The lean startup: How today's entrepreneurs use continuous innovation
+      to create radically successful businesses.</em> Crown Business.
+    </p>
+    <p>
+      Schwaber, K., &amp; Sutherland, J. (2020). <em>The Scrum guide: The definitive guide to
+      Scrum — the rules of the game.</em> Scrum.org.
+      https://scrumguides.org/scrum-guide.html
+    </p>
+    <p>
+      Statistics Canada. (2023). <em>Food security and local food purchases: 2022 Canadian
+      Community Health Survey supplement.</em> Government of Canada.
+      https://www.statcan.gc.ca
+    </p>
+  </div>
+
+  <!-- ════════════════════════ APPENDIX ════════════════════════ -->
+  <h2 class="section-title">Appendix A – Detailed Sprint Schedule</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Sprint Cycle</th>
+        <th>Weeks</th>
+        <th>Sprint Goal</th>
+        <th>Key Deliverables</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sprint 1 – Cycle 1</td>
+        <td>1–2</td>
+        <td>Complete user research</td>
+        <td>20 consumer interviews; 10 producer interviews; research synthesis report</td>
+      </tr>
+      <tr>
+        <td>Sprint 1 – Cycle 2</td>
+        <td>3–4</td>
+        <td>Finalize information architecture</td>
+        <td>Sitemap; navigation taxonomy; content inventory</td>
+      </tr>
+      <tr>
+        <td>Sprint 1 – Cycle 3</td>
+        <td>5–6</td>
+        <td>Deliver wireframes &amp; design system</td>
+        <td>Low- and mid-fidelity wireframes; typography, colour, and component library</td>
+      </tr>
+      <tr>
+        <td>Sprint 1 – Cycle 4</td>
+        <td>7–8</td>
+        <td>Producer profile feature live in staging</td>
+        <td>Producer registration flow; profile display page; admin review queue</td>
+      </tr>
+      <tr>
+        <td>Sprint 2 – Cycle 1</td>
+        <td>9–10</td>
+        <td>Product catalogue functional</td>
+        <td>Category browsing; product detail pages; inventory management for producers</td>
+      </tr>
+      <tr>
+        <td>Sprint 2 – Cycle 2</td>
+        <td>11–12</td>
+        <td>Cart and checkout complete</td>
+        <td>Cart functionality; Stripe integration; order confirmation emails</td>
+      </tr>
+      <tr>
+        <td>Sprint 2 – Cycle 3</td>
+        <td>13–14</td>
+        <td>Producer dashboard and delivery scheduling</td>
+        <td>Order management dashboard; delivery slot booking module</td>
+      </tr>
+      <tr>
+        <td>Sprint 2 – Cycle 4</td>
+        <td>15–16</td>
+        <td>Internal UAT and accessibility review</td>
+        <td>WCAG 2.1 AA audit report; bug fix backlog; consumer account features</td>
+      </tr>
+      <tr>
+        <td>Sprint 3 – Cycle 1</td>
+        <td>17–18</td>
+        <td>Beta cohort onboarded</td>
+        <td>12 producers live; 250 consumer accounts created; monitoring dashboards active</td>
+      </tr>
+      <tr>
+        <td>Sprint 3 – Cycle 2</td>
+        <td>19–20</td>
+        <td>First beta feedback loop</td>
+        <td>Sprint Review with beta participants; updated backlog; top 5 UX pain points addressed</td>
+      </tr>
+      <tr>
+        <td>Sprint 3 – Cycle 3</td>
+        <td>21–22</td>
+        <td>Performance and security hardening</td>
+        <td>Load testing report; third-party security audit; re-order feature shipped</td>
+      </tr>
+      <tr>
+        <td>Sprint 3 – Cycle 4</td>
+        <td>23–24</td>
+        <td>Soft public launch</td>
+        <td>App store approval; press release; onboarding of 10 additional producers; launch retrospective</td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>
