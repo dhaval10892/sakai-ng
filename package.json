@@ -3,6 +3,11 @@
     "version": "21.0.0",
     "scripts": {
         "ng": "ng",
+        "postinstall": "node scripts/ensure-assets.js",
+        "prebuild": "node scripts/ensure-assets.js",
+        "prestart": "node scripts/ensure-assets.js",
+        "pretest": "node scripts/ensure-assets.js",
+        "prewatch": "node scripts/ensure-assets.js",
         "start": "ng serve",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
